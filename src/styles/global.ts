@@ -14,6 +14,7 @@ const Global = createGlobalStyle`
   body {
     max-width: 100vw;
     overflow-x: hidden;
+    height: 100%;
   }
 
   a {
