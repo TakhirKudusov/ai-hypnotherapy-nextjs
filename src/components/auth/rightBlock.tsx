@@ -144,6 +144,7 @@ const RightBlockWrapper = styled(BlockWrapper)`
   background-size: 92%;
   padding: 30px 50px;
   align-items: flex-start;
+  height: 100%;
 `;
 
 export default RightBlock;

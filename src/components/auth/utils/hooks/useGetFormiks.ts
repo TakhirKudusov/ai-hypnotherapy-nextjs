@@ -6,8 +6,12 @@ import { registerInitialValues } from "@/components/auth/utils/constants/registe
 import { REGISTER_SCHEMA } from "@/components/auth/utils/constants/registerSchema";
 import { TRegisterValues } from "@/components/auth/utils/types/TRegisterValues";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/routes/routes.enum";
 
 export const useGetFormiks = () => {
+  const router = useRouter();
+
   const loginFormik = useFormik({
     initialValues: loginInitialValues,
     validationSchema: LOGIN_SCHEMA,
@@ -20,6 +24,7 @@ export const useGetFormiks = () => {
       if (email === "test@test.test" && password === "123456qQ") {
         toast.success("Вход выполнен успешно");
         formikHelpers.resetForm();
+        router.push(ROUTES.CHAT);
       } else {
         toast.error("Неверные данные пользователя");
       }
@@ -36,6 +41,7 @@ export const useGetFormiks = () => {
       console.log(values);
       toast.success("Вы успешно зарегистрированы");
       formikHelpers.resetForm();
+      router.push(ROUTES.CHAT);
     },
   });
 

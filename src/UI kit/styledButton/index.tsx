@@ -3,6 +3,7 @@ import styled, { css, keyframes } from "styled-components";
 import { BUTTON_STYLE } from "@/UI kit/styledButton/utils/enums/ButtonStyle.enum";
 import { montserrat } from "@/lib/fonts";
 import { SpinnerIos } from "@styled-icons/fluentui-system-filled";
+import { BUTTON_SIZE } from "@/UI kit/styledButton/utils/enums/buttonSize.enum";
 
 type Props = {
   text: string;
@@ -13,6 +14,7 @@ type Props = {
   isLoading?: boolean;
   buttonStyle?: BUTTON_STYLE;
   className?: string;
+  buttonSize?: BUTTON_SIZE;
 };
 
 const StyledButton: FC<Props> = ({
@@ -24,6 +26,7 @@ const StyledButton: FC<Props> = ({
   isLoading,
   buttonStyle = BUTTON_STYLE.FILLED,
   className,
+  buttonSize = BUTTON_SIZE.MIDDLE,
 }) => {
   return (
     <Button
@@ -33,6 +36,7 @@ const StyledButton: FC<Props> = ({
       type={type}
       disabled={disabled}
       buttonStyle={buttonStyle}
+      buttonSize={buttonSize}
     >
       {isLoading ? <SpinnerIcon /> : text}
     </Button>
@@ -66,7 +70,11 @@ const SpinnerIcon = styled(SpinnerIos)<{ buttonStyle: BUTTON_STYLE }>`
   }};
 `;
 
-const Button = styled.button<{ buttonStyle: BUTTON_STYLE }>`
+const Button = styled.button<{
+  buttonStyle: BUTTON_STYLE;
+  buttonSize: BUTTON_SIZE;
+}>`
+  padding: 12px 24px;
   text-transform: capitalize;
   display: flex;
   justify-content: center;
@@ -74,11 +82,18 @@ const Button = styled.button<{ buttonStyle: BUTTON_STYLE }>`
   align-items: center;
   outline: none;
   width: 100%;
-  height: 49px;
-  border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
   transition: 150ms linear;
+  border-radius: 10px;
+  height: ${({ buttonSize }) => {
+    switch (buttonSize) {
+      case BUTTON_SIZE.MIDDLE:
+        return 49;
+      case BUTTON_SIZE.SMALL:
+        return 38;
+    }
+  }}px;
   ${({ buttonStyle }) => {
     switch (buttonStyle) {
       case BUTTON_STYLE.FILLED:

@@ -9,14 +9,17 @@ const Global = createGlobalStyle`
     margin: 0;
     scroll-behavior: smooth;
   }
-
+  
   html,
   body {
     max-width: 100vw;
     overflow-x: hidden;
-    height: 100%;
   }
 
+  body {
+    min-height: 100vh;
+  }
+  
   a {
     color: inherit;
     text-decoration: none;
