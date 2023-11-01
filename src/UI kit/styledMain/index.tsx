@@ -19,6 +19,7 @@ const Main = styled.main`
   position: absolute;
   overflow-x: hidden;
   overflow-y: auto;
+  justify-content: center;
 `;
 
 export default memo(StyledMain);

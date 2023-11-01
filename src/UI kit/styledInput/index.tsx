@@ -6,7 +6,7 @@ type Props = {
   placeholder: string;
   name: string;
   value: string | number;
-  onChange: (e: ChangeEvent<any>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   type?: HTMLInputTypeAttribute;
   required?: boolean;
