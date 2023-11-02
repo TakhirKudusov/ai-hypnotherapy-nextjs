@@ -4,12 +4,22 @@ import { Microphone, PaperAirplane } from "@styled-icons/heroicons-solid";
 import { useState } from "react";
 import BotMessage from "@/components/chat/botMessage";
 import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
+import { particleActions } from "@/components/chat/particle-manager";
+import dynamic from "next/dynamic";
+
+const Sphere = dynamic(() => import("@/components/chat/Canvas"), {
+  ssr: false,
+});
 
 const ChatBlock = () => {
   const [text, setText] = useState<string>("");
 
   return (
     <Wrapper>
+      <CanvasContainer>
+        <Sphere draw={particleActions.draw} />
+      </CanvasContainer>
+
       <Container>
         <ScrollContainer>
           <BotMessage
@@ -49,6 +59,16 @@ const ChatBlock = () => {
     </Wrapper>
   );
 };
+
+const CanvasContainer = styled.div`
+  width: 100%;
+  overflow: visible;
+  justify-content: center;
+  display: flex;
+  position: absolute;
+  z-index: 0;
+  bottom: 20%;
+`;
 
 const MicrophoneIcon = styled(Microphone)`
   width: 30px;
@@ -113,14 +133,17 @@ const BottomMessageWrapper = styled.div`
 `;
 
 const Container = styled.div`
-  height: 100%;
-  background-color: rgb(79, 84, 103);
+  min-height: 60%;
+  max-height: 60%;
+  background-color: rgba(79, 84, 103, 0.75);
   border-radius: 10px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+  z-index: 1;
+  border-top: rgba(255, 255, 255, 0.8) 1px solid;
 `;
 
 const Wrapper = styled.section`
@@ -132,6 +155,7 @@ const Wrapper = styled.section`
   z-index: 1;
   top: 0;
   padding-bottom: 40px;
+  justify-content: flex-end;
 `;
 
 export default ChatBlock;

@@ -36,11 +36,13 @@ const ChatText = styled.p<{ emitter: MESSAGE_EMITTER }>`
   font-weight: 500;
   color: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "black" : "white"};
+  text-align: ${({ emitter }) =>
+    emitter === MESSAGE_EMITTER.BOT ? "start" : "end"};
 `;
 
 const TextContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`
   background-color: ${({ emitter }) =>
-    emitter === MESSAGE_EMITTER.BOT ? "white" : "#7D98FF"};
+    emitter === MESSAGE_EMITTER.BOT ? "white" : "rgba(125,152,255)"};
   padding: 15px 15px 14px;
   border-radius: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "5px 10px 10px" : "10px 5px 10px 10px"};
