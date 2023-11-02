@@ -13,8 +13,7 @@ const LeftBottomBlock = () => {
         <Text className={montserrat.className}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
+          minim veniam, quis nostrud exercitation ullamco laboris nisi
         </Text>
         <Button text="пополнить" buttonSize={BUTTON_SIZE.SMALL} />
       </InfoContainer>
@@ -40,6 +39,11 @@ const BannerBlock = styled.div`
   border-radius: 7px;
   background: url("/jpg/waves.jpg") bottom no-repeat white;
   padding: 20px 10px 15px 15px;
+  @media screen and (max-width: 375px) {
+    min-width: 120px;
+    flex-grow: 1;
+    height: 66%;
+  }
 `;
 
 const Button = styled(StyledButton)`
@@ -50,12 +54,18 @@ const Text = styled.p`
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
+  @media screen and (max-width: 1200px) {
+    font-size: 12px;
+  }
 `;
 
 const Title = styled.p`
   font-weight: 600;
   font-size: 16px;
   line-height: 1.4;
+  @media screen and (max-width: 1200px) {
+    font-size: 14px;
+  }
 `;
 
 const InfoContainer = styled.div`
@@ -63,6 +73,9 @@ const InfoContainer = styled.div`
   flex-direction: column;
   row-gap: 5px;
   justify-content: space-between;
+  @media screen and (max-width: 768px) {
+    row-gap: 10px;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -72,6 +85,12 @@ const Wrapper = styled.div`
   background-color: #f5f5f5;
   border-radius: 10px;
   flex-grow: 1;
+  @media screen and (max-width: 768px) {
+    min-height: 190px;
+  }
+  @media screen and (max-width: 375px) {
+    align-items: center;
+  }
 `;
 
 export default LeftBottomBlock;

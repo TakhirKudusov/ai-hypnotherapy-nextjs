@@ -14,6 +14,11 @@ const Global = createGlobalStyle`
   body {
     max-width: 100vw;
     overflow-x: hidden;
+    //-ms-overflow-style: none;
+    //scrollbar-width: none;
+    //&::-webkit-scrollbar {
+    //  display: none;
+    //}
   }
 
   body {

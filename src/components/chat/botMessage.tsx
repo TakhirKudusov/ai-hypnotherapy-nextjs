@@ -38,6 +38,9 @@ const ChatText = styled.p<{ emitter: MESSAGE_EMITTER }>`
     emitter === MESSAGE_EMITTER.BOT ? "black" : "white"};
   text-align: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "start" : "end"};
+  @media screen and (max-width: 1200px) {
+    font-size: 11px;
+  }
 `;
 
 const TextContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`
@@ -48,12 +51,20 @@ const TextContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`
     emitter === MESSAGE_EMITTER.BOT ? "5px 10px 10px" : "10px 5px 10px 10px"};
   margin: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "0 20px 0 0" : "0 0 0 20px"};
+  @media screen and (max-width: 1200px) {
+    padding: 13px 13px 12px;
+    margin: ${({ emitter }) =>
+      emitter === MESSAGE_EMITTER.BOT ? "0 10px 0 0" : "0 0 0 10px"};
+  }
 `;
 
 const Title = styled.p`
   color: #f7f7f7;
   font-size: 12px;
   font-weight: 500;
+  @media screen and (max-width: 1200px) {
+    font-size: 11px;
+  }
 `;
 
 const TextWrapper = styled.div`
@@ -66,12 +77,20 @@ const FaceIcon = styled(Face)`
   width: 25px;
   height: 25px;
   color: #2e2e2e;
+  @media screen and (max-width: 1200px) {
+    min-width: 21px;
+    height: 21px;
+  }
 `;
 
 const BotIcon = styled(PanoramaPhotosphereSelect)`
   width: 25px;
   height: 25px;
   color: #2e2e2e;
+  @media screen and (max-width: 1200px) {
+    min-width: 21px;
+    height: 21px;
+  }
 `;
 
 const AvatarWrapper = styled.div`
@@ -82,6 +101,10 @@ const AvatarWrapper = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 40px;
+  @media screen and (max-width: 1200px) {
+    min-width: 35px;
+    height: 35px;
+  }
 `;
 
 const Wrapper = styled.div<{ emitter: MESSAGE_EMITTER }>`

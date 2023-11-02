@@ -48,7 +48,7 @@ const ChatBlock = () => {
             value={text}
             name="text"
             onChange={(e) => setText(e.currentTarget.value)}
-            placeholder="Задайте свой вопрос"
+            placeholder="Задайте свой вопрос..."
           />
           <IconsContainer>
             <AirPlaneIcon />
@@ -67,7 +67,7 @@ const CanvasContainer = styled.div`
   display: flex;
   position: absolute;
   z-index: 0;
-  bottom: 20%;
+  top: 0;
 `;
 
 const MicrophoneIcon = styled(Microphone)`
@@ -82,6 +82,10 @@ const MicrophoneIcon = styled(Microphone)`
   &:active {
     opacity: 0.6;
   }
+  @media screen and (max-width: 1200px) {
+    width: 27px;
+    height: 27px;
+  }
 `;
 
 const AirPlaneIcon = styled(PaperAirplane)`
@@ -95,6 +99,10 @@ const AirPlaneIcon = styled(PaperAirplane)`
   }
   &:active {
     opacity: 0.6;
+  }
+  @media screen and (max-width: 1200px) {
+    width: 27px;
+    height: 27px;
   }
 `;
 
@@ -122,6 +130,10 @@ const ScrollContainer = styled.div`
     background: none;
     border-radius: 5px;
   }
+  @media screen and (max-width: 1200px) {
+    padding: 15px 20px;
+    row-gap: 20px;
+  }
 `;
 
 const BottomMessageWrapper = styled.div`
@@ -133,8 +145,8 @@ const BottomMessageWrapper = styled.div`
 `;
 
 const Container = styled.div`
-  min-height: 60%;
-  max-height: 60%;
+  min-height: 66%;
+  max-height: 66%;
   background-color: rgba(79, 84, 103, 0.75);
   border-radius: 10px;
   flex-grow: 1;
@@ -156,6 +168,17 @@ const Wrapper = styled.section`
   top: 0;
   padding-bottom: 40px;
   justify-content: flex-end;
+  @media screen and (max-width: 1200px) {
+    padding-bottom: 20px;
+  }
+  @media screen and (max-width: 768px) {
+    padding-bottom: 0;
+    height: 650px;
+    flex-basis: unset;
+  }
+  @media screen and (max-width: 425px) {
+    height: 550px;
+  }
 `;
 
 export default ChatBlock;

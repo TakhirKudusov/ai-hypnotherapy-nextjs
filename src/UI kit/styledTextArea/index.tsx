@@ -63,6 +63,9 @@ const TextArea = styled.textarea`
   &::placeholder {
     color: white;
   }
+  @media screen and (max-width: 1200px) {
+    min-height: 59px;
+  }
 `;
 
 export default memo(StyledTextArea);

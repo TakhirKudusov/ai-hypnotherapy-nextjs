@@ -44,6 +44,9 @@ const useCanvas = (draw: any) => {
 
 const StyledCanvas = styled.canvas`
   width: 90%;
+  @media screen and (max-width: 425px) {
+    width: 100%;
+  }
 `;
 
 export default Canvas;

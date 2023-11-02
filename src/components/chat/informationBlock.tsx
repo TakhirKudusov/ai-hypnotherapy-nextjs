@@ -17,11 +17,20 @@ const InformationBlock = () => {
 const BottomBlockWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  flex-basis: 30%;
+  flex-basis: 32%;
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const MarginBlock = styled.div`
   min-height: 40px;
+  @media screen and (max-width: 1200px) {
+    min-height: 20px;
+  }
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Wrapper = styled.section`
@@ -31,6 +40,10 @@ const Wrapper = styled.section`
   height: 100%;
   row-gap: 20px;
   flex-basis: 50%;
+  @media screen and (max-width: 768px) {
+    height: auto;
+    flex-basis: unset;
+  }
 `;
 
 export default InformationBlock;
