@@ -9,8 +9,9 @@ const RightBlock = () => {
     <RightBlockWrapper>
       <RightBlockContainer>
         <TitleContainer>
-          <AppText className={spaceGrotesk.className}>app</AppText>
-          <Title className={spaceGrotesk.className}>AI Hypno</Title>
+          <Title className={spaceGrotesk.className}>
+            AI Hypno<AppText className={spaceGrotesk.className}>app</AppText>
+          </Title>
           <SubTitle className={montserrat.className}>
             Lorem ipsum dolor sit amet
           </SubTitle>
@@ -39,12 +40,20 @@ const RightBlock = () => {
           </TextTypeWrapper>
         </WhiteBlock>
         <BottomText className={montserrat.className}>
-          👈 зарегистрируйтесь, чтобы попробовать
+          <EmojiSpan lg>👈</EmojiSpan> зарегистрируйтесь, чтобы попробовать{" "}
+          <EmojiSpan sm>👇</EmojiSpan>
         </BottomText>
       </RightBlockContainer>
     </RightBlockWrapper>
   );
 };
+
+const EmojiSpan = styled.span<{ lg?: boolean; sm?: boolean }>`
+  display: ${({ lg }) => (lg ? "inline-block" : "none")};
+  @media screen and (max-width: 768px) {
+    display: ${({ sm }) => (sm ? "inline-block" : "none")};
+  }
+`;
 
 const TextTypeWrapper = styled.div`
   background-color: #4f5467;
@@ -55,6 +64,9 @@ const TextTypeWrapper = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    min-height: 80px;
+  }
 `;
 
 const WBSubTitle = styled.div`
@@ -91,6 +103,9 @@ const BottomText = styled.p`
   font-weight: 400;
   color: white;
   line-height: 1.4;
+  @media screen and (max-width: 768px) {
+    font-size: 15px;
+  }
 `;
 
 const WhiteBlock = styled.div`
@@ -101,6 +116,10 @@ const WhiteBlock = styled.div`
   column-gap: 20px;
   border-radius: 10px;
   align-items: center;
+  @media screen and (max-width: 1200px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const SubTitle = styled.p`
@@ -108,15 +127,21 @@ const SubTitle = styled.p`
   font-size: 14px;
   font-weight: 400;
   margin-top: -5px;
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
-const AppText = styled.p`
+const AppText = styled.span`
   color: #ffce11;
   font-size: 18px;
   font-weight: 600;
   position: relative;
-  top: 10px;
-  left: 145px;
+  bottom: 23px;
+  right: 7px;
+  @media screen and (max-width: 768px) {
+    bottom: 20px;
+  }
 `;
 
 const Title = styled.h1`
@@ -124,12 +149,18 @@ const Title = styled.h1`
   font-weight: 600;
   font-size: 36px;
   margin-top: -10px;
+  @media screen and (max-width: 768px) {
+    font-size: 30px;
+  }
 `;
 
 const TitleContainer = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 6px;
+  @media screen and (max-width: 768px) {
+    margin-top: 20px;
+  }
 `;
 
 const RightBlockContainer = styled.div`
@@ -145,6 +176,16 @@ const RightBlockWrapper = styled(BlockWrapper)`
   padding: 30px 50px;
   align-items: flex-start;
   height: 100%;
+  @media screen and (max-width: 768px) {
+    padding: 20px 20px 30px;
+    height: fit-content;
+    background-position: center -25px;
+    background-size: 85%;
+  }
+  @media screen and (max-width: 425px) {
+    background-position: bottom;
+    background-size: 100%;
+  }
 `;
 
 export default RightBlock;

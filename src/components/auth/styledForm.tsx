@@ -28,6 +28,9 @@ const Title = styled.h3`
   color: black;
   font-size: 20px;
   font-weight: 600;
+  @media screen and (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const Form = styled.form`

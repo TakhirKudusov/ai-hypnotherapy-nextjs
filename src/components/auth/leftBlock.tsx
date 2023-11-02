@@ -78,6 +78,14 @@ const BlockContainer = styled.div`
   flex-direction: column;
   width: 50%;
   max-width: 430px;
+  @media screen and (max-width: 1200px) {
+    width: 320px;
+  }
+  @media screen and (max-width: 768px) {
+    padding: 30px 20px;
+    max-width: unset;
+    width: 100%;
+  }
 `;
 
 const LeftBlockWrapper = styled(BlockWrapper)``;
