@@ -13,9 +13,10 @@ import FormInnerContainer from "@/components/auth/formInnerContainer";
 
 type Props = {
   formik: FormikProps<TLoginValues>;
+  loading: boolean;
 };
 
-const LoginForm: FC<Props> = ({ formik }) => {
+const LoginForm: FC<Props> = ({ formik, loading }) => {
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     formik.handleSubmit(e);
@@ -72,6 +73,7 @@ const LoginForm: FC<Props> = ({ formik }) => {
           type="submit"
           text="войти"
           buttonStyle={BUTTON_STYLE.FILLED}
+          isLoading={loading}
         />
       </>
     </StyledForm>

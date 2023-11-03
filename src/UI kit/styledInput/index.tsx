@@ -47,9 +47,6 @@ const Input = styled.input`
   border: 1px solid rgb(199, 199, 199);
   font-size: 14px;
   height: 50px;
-  &::placeholder {
-    text-transform: capitalize;
-  }
   &:focus {
     border-color: rgb(159, 165, 254);
   }

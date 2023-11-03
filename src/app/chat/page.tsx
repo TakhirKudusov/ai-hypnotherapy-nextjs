@@ -6,8 +6,20 @@ import InformationBlock from "@/components/chat/informationBlock";
 import ChatBlock from "@/components/chat/chatBlock";
 import InformationList from "@/components/chat/informationList";
 import LeftBottomBlock from "@/components/chat/leftBottomBlock";
+import { useLayoutEffect } from "react";
+import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/routes/routes.enum";
 
 const Page = () => {
+  const router = useRouter();
+
+  useLayoutEffect(() => {
+    const accessToken = localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN);
+    const refreshToken = localStorage.getItem(LOCAL_STORAGE_ITEM.REFRESH_TOKEN);
+    if (!(accessToken && refreshToken)) router.push(ROUTES.HOME_AUTH);
+  }, []);
+
   return (
     <Main>
       <ContentWrapper>

@@ -12,7 +12,7 @@ import BlockWrapper from "@/components/auth/blockWrapper";
 const LeftBlock = () => {
   const [currForm, setCurrForm] = useState<FORM_NAME>(FORM_NAME.LOGIN);
 
-  const { loginFormik, registerFormik } = useGetFormiks();
+  const { loginFormik, registerFormik, loading } = useGetFormiks();
 
   const changeFormBtnText = useMemo(() => {
     switch (currForm) {
@@ -45,9 +45,11 @@ const LeftBlock = () => {
   return (
     <LeftBlockWrapper>
       <BlockContainer>
-        {currForm === FORM_NAME.LOGIN && <LoginForm formik={loginFormik} />}
+        {currForm === FORM_NAME.LOGIN && (
+          <LoginForm formik={loginFormik} loading={loading} />
+        )}
         {currForm === FORM_NAME.REGISTER && (
-          <RegisterForm formik={registerFormik} />
+          <RegisterForm formik={registerFormik} loading={loading} />
         )}
         <ChangeFormContainer>
           <SubTitle className={montserrat.className}>{subTitleText}</SubTitle>
@@ -57,10 +59,17 @@ const LeftBlock = () => {
             onClick={handleChangeForm}
           />
         </ChangeFormContainer>
+        <TelegramWidgetRoot id="telegram-widget-root" />
       </BlockContainer>
     </LeftBlockWrapper>
   );
 };
+
+const TelegramWidgetRoot = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: -20px;
+`;
 
 const ChangeFormContainer = styled.div`
   display: flex;

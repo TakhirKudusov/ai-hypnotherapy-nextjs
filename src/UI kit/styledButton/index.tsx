@@ -34,7 +34,7 @@ const StyledButton: FC<Props> = ({
       name={name}
       onClick={onClick}
       type={type}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       buttonStyle={buttonStyle}
       buttonSize={buttonSize}
     >

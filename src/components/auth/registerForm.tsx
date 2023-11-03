@@ -13,16 +13,18 @@ import { BUTTON_STYLE } from "@/UI kit/styledButton/utils/enums/ButtonStyle.enum
 
 type Props = {
   formik: FormikProps<TRegisterValues>;
+  loading: boolean;
 };
 
-const RegisterForm: FC<Props> = ({ formik }) => {
+const RegisterForm: FC<Props> = ({ formik, loading }) => {
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formik.values.password !== formik.values.confirmPassword)
-      return formik.setFieldError(
-        REGISTER_FIELD.CONFIRM_PASSWORD,
-        "Пароли не совпадают",
-      );
+    if (formik.values.password !== formik.values.confirmPassword) {
+      formik.touched.confirmPassword = true;
+      return formik.setErrors({
+        [REGISTER_FIELD.CONFIRM_PASSWORD]: "Пароли не совпадают",
+      });
+    }
     formik.handleSubmit(e);
   };
 
@@ -32,14 +34,6 @@ const RegisterForm: FC<Props> = ({ formik }) => {
         error: formik.errors.email && formik.touched.email,
       }),
     [formik.errors.email],
-  );
-
-  const usernameInputStyles = useMemo(
-    () =>
-      clsx({
-        error: formik.errors.username && formik.touched.username,
-      }),
-    [formik.errors.username],
   );
 
   const passwordInputStyles = useMemo(
@@ -62,19 +56,6 @@ const RegisterForm: FC<Props> = ({ formik }) => {
     <StyledForm title="Регистрация" handleSubmit={handleSubmit}>
       <>
         <FormInnerContainer>
-          <InputWrapper
-            errorMessage={formik.errors.username}
-            touched={formik.touched.username}
-          >
-            <StyledInput
-              value={formik.values[REGISTER_FIELD.USERNAME]}
-              placeholder={REGISTER_PLACEHOLDER.USERNAME}
-              name={REGISTER_FIELD.USERNAME}
-              onChange={formik.handleChange}
-              type="text"
-              className={usernameInputStyles}
-            />
-          </InputWrapper>
           <InputWrapper
             errorMessage={formik.errors.email}
             touched={formik.touched.email}
@@ -119,6 +100,7 @@ const RegisterForm: FC<Props> = ({ formik }) => {
           type="submit"
           text="зарегистрироваться"
           buttonStyle={BUTTON_STYLE.FILLED}
+          isLoading={loading}
         />
       </>
     </StyledForm>

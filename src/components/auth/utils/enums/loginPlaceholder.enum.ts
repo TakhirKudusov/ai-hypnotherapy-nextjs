@@ -1,4 +1,4 @@
 export enum LOGIN_PLACEHOLDER {
-  EMAIL = "email",
-  PASSWORD = "пароль",
+  EMAIL = "Email",
+  PASSWORD = "Пароль",
 }

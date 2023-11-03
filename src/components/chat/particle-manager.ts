@@ -157,7 +157,7 @@ function draw(
   cosAngle = Math.cos(turnAngle);
 
   //background fill
-  context.fillStyle = "white";
+  context.fillStyle = "black";
   context.fillRect(0, 0, displayWidth, displayHeight);
 
   //update and draw particles

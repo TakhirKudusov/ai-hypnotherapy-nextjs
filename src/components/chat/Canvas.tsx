@@ -7,7 +7,7 @@ const Canvas = (props: any) => {
   const canvasRef = useCanvas(draw);
   useMicVADWrapper();
 
-  return <StyledCanvas ref={canvasRef} width={400} height={400} {...rest} />;
+  return <StyledCanvas ref={canvasRef} width={450} height={450} {...rest} />;
 };
 
 const useCanvas = (draw: any) => {
@@ -44,6 +44,7 @@ const useCanvas = (draw: any) => {
 
 const StyledCanvas = styled.canvas`
   width: 90%;
+  border-radius: 10px;
   @media screen and (max-width: 425px) {
     width: 100%;
   }

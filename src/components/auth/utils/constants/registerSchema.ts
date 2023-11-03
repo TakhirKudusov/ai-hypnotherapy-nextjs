@@ -6,7 +6,6 @@ export const REGISTER_SCHEMA = Yup.object<TRegisterValues>().shape({
   email: Yup.string()
     .email("Пожалуйста, введите корректный mail")
     .required("Пожалуйста, введите email"),
-  username: Yup.string().required("Пожалуйста, введите username"),
   password: Yup.string()
     .required("Пожалуйста, введите пароль")
     .min(8, "Минимальная длина пароля - 8 символов")
