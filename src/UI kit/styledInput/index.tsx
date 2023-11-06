@@ -45,7 +45,7 @@ const Input = styled.input`
   padding: 10px 15px;
   border-radius: 10px;
   border: 1px solid rgb(199, 199, 199);
-  font-size: 14px;
+  font-size: 16px;
   height: 50px;
   &:focus {
     border-color: rgb(159, 165, 254);

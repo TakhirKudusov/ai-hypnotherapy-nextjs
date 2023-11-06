@@ -1,11 +1,17 @@
-import styled from "styled-components";
-import StyledTextArea from "@/UI kit/styledTextArea";
+import styled, { keyframes } from "styled-components";
 import { Microphone, PaperAirplane } from "@styled-icons/heroicons-solid";
-import { useState } from "react";
-import BotMessage from "@/components/chat/botMessage";
-import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
+import { useMemo, useRef, useState } from "react";
 import { particleActions } from "@/components/chat/particle-manager";
 import dynamic from "next/dynamic";
+import {
+  useGetChatQuery,
+  useMakeInterferenceFromTextMutation,
+} from "@/redux/APIs/chatApi";
+import BotMessage from "@/components/chat/botMessage";
+import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
+import StyledTextArea from "@/UI kit/styledTextArea";
+import { SpinnerIos } from "@styled-icons/fluentui-system-filled";
+import { montserrat } from "@/lib/fonts";
 
 const Sphere = dynamic(() => import("@/components/chat/Canvas"), {
   ssr: false,
@@ -13,35 +19,84 @@ const Sphere = dynamic(() => import("@/components/chat/Canvas"), {
 
 const ChatBlock = () => {
   const [text, setText] = useState<string>("");
+  const [recording, setRecording] = useState<boolean>(false);
+
+  const { data, isLoading, isError } = useGetChatQuery(null);
+
+  const [makeInterferenceFromText, textInterfData] =
+    useMakeInterferenceFromTextMutation();
+
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const messages = useMemo(() => data ?? [], [data]);
+
+  const chatContainerHeight = useMemo(() => {
+    if (!chatContainerRef.current) return "100%";
+    return recording
+      ? `${Math.floor(chatContainerRef.current?.offsetHeight * 0.66)}px`
+      : `${chatContainerRef.current?.offsetHeight}px`;
+  }, [recording, chatContainerRef]);
+
+  const handleMouseChange = (value: boolean) => () => setRecording(value);
+
+  const handlePlaneButtonClick = async () => {
+    console.log(text);
+    if (!text.length) return;
+    try {
+      await makeInterferenceFromText({ text });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setText("");
+    }
+  };
 
   return (
     <Wrapper>
-      <ChatContainer>
+      <ChatContainer ref={chatContainerRef}>
         <CanvasContainer>
           <Sphere draw={particleActions.draw} />
         </CanvasContainer>
-        <Container>
+        <Container
+          style={{
+            maxHeight: chatContainerHeight,
+          }}
+        >
           <ScrollContainer>
-            <BotMessage
-              emitter={MESSAGE_EMITTER.BOT}
-              text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-            />
-            <BotMessage
-              emitter={MESSAGE_EMITTER.USER}
-              text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem"
-            />
-            <BotMessage
-              emitter={MESSAGE_EMITTER.BOT}
-              text="But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful."
-            />
-            <BotMessage
-              emitter={MESSAGE_EMITTER.USER}
-              text="At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga."
-            />
-            <BotMessage
-              emitter={MESSAGE_EMITTER.BOT}
-              text="On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish."
-            />
+            {isLoading ? (
+              <LoadingContainer>
+                <SpinnerIcon />
+              </LoadingContainer>
+            ) : isError ? (
+              <ErrorMessage className={montserrat.className}>
+                Что-то пошло не так.
+                <br />
+                Мы работаем над этим.
+              </ErrorMessage>
+            ) : (
+              <>
+                <BotMessage
+                  emitter={MESSAGE_EMITTER.BOT}
+                  text="Lorem Ipsum - это текст-рыба, часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной рыбой для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum."
+                />
+                {messages.map((el) => {
+                  return (
+                    <BotMessage
+                      key={el.utcDateCreation}
+                      emitter={
+                        el.actor === 0
+                          ? MESSAGE_EMITTER.USER
+                          : MESSAGE_EMITTER.BOT
+                      }
+                      text={el.text}
+                    />
+                  );
+                })}
+                {textInterfData.isLoading && (
+                  <BotMessage text="" emitter={MESSAGE_EMITTER.BOT} isLoading />
+                )}
+              </>
+            )}
           </ScrollContainer>
           <BottomMessageWrapper>
             <StyledTextArea
@@ -51,8 +106,14 @@ const ChatBlock = () => {
               placeholder="Задайте свой вопрос..."
             />
             <IconsContainer>
-              <AirPlaneIcon />
-              <MicrophoneIcon />
+              <AirPlaneIcon onClick={handlePlaneButtonClick} />
+              <MicrophoneIcon
+                onMouseDown={handleMouseChange(true)}
+                onMouseUp={handleMouseChange(false)}
+                onTouchStart={handleMouseChange(true)}
+                onTouchEnd={handleMouseChange(false)}
+                onMouseLeave={handleMouseChange(false)}
+              />
             </IconsContainer>
           </BottomMessageWrapper>
         </Container>
@@ -60,6 +121,37 @@ const ChatBlock = () => {
     </Wrapper>
   );
 };
+
+const ErrorMessage = styled.div`
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  line-height: 1.4;
+`;
+
+const animation = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const SpinnerIcon = styled(SpinnerIos)`
+  width: 35px;
+  height: 35px;
+  color: white;
+  animation: ${animation} linear 1000ms infinite;
+`;
+
+const LoadingContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -114,8 +206,10 @@ const IconsContainer = styled.div`
 `;
 
 const ScrollContainer = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   overflow-x: auto;
   padding: 40px 25px;
   row-gap: 40px;
@@ -146,8 +240,8 @@ const BottomMessageWrapper = styled.div`
 `;
 
 const Container = styled.div`
-  min-height: 66%;
-  max-height: 66%;
+  width: 100%;
+  transition: 300ms linear;
   background-color: rgba(79, 84, 103);
   border-radius: 10px;
   flex-grow: 1;
@@ -163,6 +257,7 @@ const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   justify-content: flex-end;
   background-color: black;
   border-radius: 10px;

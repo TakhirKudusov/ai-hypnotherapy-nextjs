@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useServerInsertedHTML } from "next/navigation";
 import { ServerStyleSheet, StyleSheetManager } from "styled-components";
 
@@ -18,6 +18,11 @@ export default function StyledComponentsRegistry({
     styledComponentsStyleSheet.instance.clearTag();
     return <>{styles}</>;
   });
+
+  useEffect(() => {
+    if (screen?.orientation?.lock)
+      screen.orientation.lock("portrait").catch(console.error);
+  }, []);
 
   if (typeof window !== "undefined") return <>{children}</>;
 

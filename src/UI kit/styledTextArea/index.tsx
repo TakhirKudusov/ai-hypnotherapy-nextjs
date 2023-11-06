@@ -38,7 +38,7 @@ const TextArea = styled.textarea`
   border-radius: 5px;
   padding: 10px;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 16px;
   color: white;
   border: none;
   outline: none;

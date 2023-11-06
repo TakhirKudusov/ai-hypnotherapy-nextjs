@@ -44,6 +44,9 @@ dependencies:
   react-redux:
     specifier: ^8.1.3
     version: 8.1.3(@types/react-dom@18.0.0)(@types/react@18.0.0)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
+  react-screen-wake-lock:
+    specifier: ^3.0.2
+    version: 3.0.2(react@18.2.0)
   react-toastify:
     specifier: ^9.1.3
     version: 9.1.3(react-dom@18.2.0)(react@18.2.0)
@@ -2322,6 +2325,15 @@ packages:
       react-is: 18.2.0
       redux: 4.2.1
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /react-screen-wake-lock@3.0.2(react@18.2.0):
+    resolution: {integrity: sha512-f88vcfMG1AWYRSIWQ5Qx5YVboH6TSL0F4ZlFLERZp6aKiZRGVRAAJ9wedJdO5jqTMcCDZ4OXJ8PjcSkDmvGSBg==}
+    engines: {node: '>=14.16'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-toastify@9.1.3(react-dom@18.2.0)(react@18.2.0):

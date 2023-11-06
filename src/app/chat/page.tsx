@@ -6,13 +6,24 @@ import InformationBlock from "@/components/chat/informationBlock";
 import ChatBlock from "@/components/chat/chatBlock";
 import InformationList from "@/components/chat/informationList";
 import LeftBottomBlock from "@/components/chat/leftBottomBlock";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/routes/routes.enum";
+import { useWakeLock } from "react-screen-wake-lock";
 
 const Page = () => {
   const router = useRouter();
+
+  const { isSupported, request } = useWakeLock({
+    onRequest: () => console.log("Screen Wake Lock: requested!"),
+    onError: () => console.log("An error happened 💥"),
+    onRelease: () => console.log("Screen Wake Lock: released!"),
+  });
+
+  useEffect(() => {
+    if (isSupported) request().catch(console.error);
+  }, [isSupported]);
 
   useLayoutEffect(() => {
     const accessToken = localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN);
