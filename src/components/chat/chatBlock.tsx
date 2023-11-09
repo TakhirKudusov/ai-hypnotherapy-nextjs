@@ -1,61 +1,94 @@
 import styled, { keyframes } from "styled-components";
-import { Microphone, PaperAirplane } from "@styled-icons/heroicons-solid";
-import { useMemo, useRef, useState } from "react";
-import { particleActions } from "@/components/chat/particle-manager";
-import dynamic from "next/dynamic";
 import {
-  useGetChatQuery,
-  useMakeInterferenceFromTextMutation,
-} from "@/redux/APIs/chatApi";
-import BotMessage from "@/components/chat/botMessage";
-import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
-import StyledTextArea from "@/UI kit/styledTextArea";
+  Dispatch,
+  FC,
+  memo,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { particleActions } from "@/components/chat/particle-manager";
 import { SpinnerIos } from "@styled-icons/fluentui-system-filled";
-import { montserrat } from "@/lib/fonts";
+import InputBlock from "@/components/chat/inputBlock";
+import { useStartNewDialogueMutation } from "@/redux/APIs/chatApi";
+import ChatMessagesList from "@/components/chat/chatMessagesList";
+import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
+import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
+import Canvas from "@/components/chat/Canvas";
+import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
+import { onSpeechEnd } from "@/components/chat/speech-manager";
 
-const Sphere = dynamic(() => import("@/components/chat/Canvas"), {
-  ssr: false,
-});
+type Props = {
+  messages: TChatMessage[];
+  isLoading: boolean;
+  isError: boolean;
+  makeInterferenceFromText: (arg: TTextData) => void;
+  sphereWorking: boolean;
+  setSphereWorking: Dispatch<SetStateAction<boolean>>;
+  handleSpeechEnd: () => void;
+  sendTextLoading: boolean;
+};
 
-const ChatBlock = () => {
+const ChatBlock: FC<Props> = ({
+  makeInterferenceFromText,
+  messages,
+  isError,
+  isLoading,
+  setSphereWorking,
+  sphereWorking,
+  handleSpeechEnd,
+  sendTextLoading,
+}) => {
   const [text, setText] = useState<string>("");
-  const [recording, setRecording] = useState<boolean>(false);
-
-  const { data, isLoading, isError } = useGetChatQuery(null);
-
-  const [makeInterferenceFromText, textInterfData] =
-    useMakeInterferenceFromTextMutation();
+  const [chatContainerHeight, setChatContainerHeight] = useState<string>("");
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const messages = useMemo(() => data ?? [], [data]);
+  const [startNewDialogue, startnNewDialogueData] =
+    useStartNewDialogueMutation();
 
-  const chatContainerHeight = useMemo(() => {
-    if (!chatContainerRef.current) return "100%";
-    return recording
-      ? `${Math.floor(chatContainerRef.current?.offsetHeight * 0.66)}px`
-      : `${chatContainerRef.current?.offsetHeight}px`;
-  }, [recording, chatContainerRef]);
+  const recorderControls = useAudioRecorder();
 
-  const handleMouseChange = (value: boolean) => () => setRecording(value);
-
-  const handlePlaneButtonClick = async () => {
-    console.log(text);
-    if (!text.length) return;
-    try {
-      await makeInterferenceFromText({ text });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setText("");
+  const changeScrollContainerHeight = useCallback(() => {
+    if (!chatContainerRef.current) {
+      setChatContainerHeight("100%");
+      return;
     }
+    if (sphereWorking) {
+      setChatContainerHeight(
+        `${Math.floor(chatContainerRef.current?.offsetHeight * 0.66)}px`,
+      );
+    } else {
+      setChatContainerHeight(`${chatContainerRef.current?.offsetHeight}px`);
+    }
+  }, [sphereWorking, chatContainerRef]);
+
+  useEffect(() => {
+    changeScrollContainerHeight();
+  }, [changeScrollContainerHeight]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      window.addEventListener("resize", changeScrollContainerHeight);
+
+    return () => {
+      if (typeof window !== "undefined")
+        window.removeEventListener("resize", changeScrollContainerHeight);
+    };
+  }, [sphereWorking]);
+
+  const handleStartNewDDialogueClick = async () => {
+    if (sphereWorking) return;
+    await startNewDialogue(null);
   };
 
   return (
     <Wrapper>
       <ChatContainer ref={chatContainerRef}>
         <CanvasContainer>
-          <Sphere draw={particleActions.draw} />
+          <Canvas draw={particleActions.draw} />
         </CanvasContainer>
         <Container
           style={{
@@ -63,64 +96,79 @@ const ChatBlock = () => {
           }}
         >
           <ScrollContainer>
+            <NewDialogButton onClick={handleStartNewDDialogueClick}>
+              Начать новый диалог
+            </NewDialogButton>
             {isLoading ? (
               <LoadingContainer>
                 <SpinnerIcon />
               </LoadingContainer>
             ) : isError ? (
-              <ErrorMessage className={montserrat.className}>
+              <ErrorMessage>
                 Что-то пошло не так.
                 <br />
                 Мы работаем над этим.
               </ErrorMessage>
             ) : (
-              <>
-                <BotMessage
-                  emitter={MESSAGE_EMITTER.BOT}
-                  text="Lorem Ipsum - это текст-рыба, часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной рыбой для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum."
-                />
-                {messages.map((el) => {
-                  return (
-                    <BotMessage
-                      key={el.utcDateCreation}
-                      emitter={
-                        el.actor === 0
-                          ? MESSAGE_EMITTER.USER
-                          : MESSAGE_EMITTER.BOT
-                      }
-                      text={el.text}
-                    />
-                  );
-                })}
-                {textInterfData.isLoading && (
-                  <BotMessage text="" emitter={MESSAGE_EMITTER.BOT} isLoading />
-                )}
-              </>
+              <ChatMessagesList messages={messages} />
             )}
           </ScrollContainer>
-          <BottomMessageWrapper>
-            <StyledTextArea
-              value={text}
-              name="text"
-              onChange={(e) => setText(e.currentTarget.value)}
-              placeholder="Задайте свой вопрос..."
+          <InputBlock
+            sendTextLoading={sendTextLoading}
+            sphereWorking={sphereWorking}
+            makeInterferenceFromText={makeInterferenceFromText}
+            text={text}
+            setText={setText}
+            setSphereWorking={setSphereWorking}
+            startRecord={recorderControls.startRecording}
+            stopRecord={recorderControls.stopRecording}
+          />
+          <RecorderWrapper>
+            <AudioRecorder
+              audioTrackConstraints={{
+                echoCancellation: true,
+                noiseSuppression: true,
+              }}
+              mediaRecorderOptions={{
+                audioBitsPerSecond: 128000,
+              }}
+              recorderControls={recorderControls}
+              onRecordingComplete={onSpeechEnd(handleSpeechEnd)}
+              onNotAllowedOrFound={() => console.error("NOT ALLOWED RECORDING")}
             />
-            <IconsContainer>
-              <AirPlaneIcon onClick={handlePlaneButtonClick} />
-              <MicrophoneIcon
-                onMouseDown={handleMouseChange(true)}
-                onMouseUp={handleMouseChange(false)}
-                onTouchStart={handleMouseChange(true)}
-                onTouchEnd={handleMouseChange(false)}
-                onMouseLeave={handleMouseChange(false)}
-              />
-            </IconsContainer>
-          </BottomMessageWrapper>
+          </RecorderWrapper>
         </Container>
       </ChatContainer>
     </Wrapper>
   );
 };
+
+const RecorderWrapper = styled.div`
+  width: 0;
+  height: 0;
+  overflow: hidden;
+`;
+
+const NewDialogButton = styled.button`
+  padding: 10px;
+  position: absolute;
+  z-index: 5;
+  background-color: rgb(48, 51, 73);
+  top: 0;
+  color: white;
+  border-radius: 0 0 10px 10px;
+  cursor: pointer;
+  border: none;
+  transition: 150ms linear;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+`;
 
 const ErrorMessage = styled.div`
   color: white;
@@ -163,56 +211,19 @@ const CanvasContainer = styled.div`
   top: 0;
 `;
 
-const MicrophoneIcon = styled(Microphone)`
-  width: 30px;
-  height: 30px;
-  color: #e9e9e9;
-  cursor: pointer;
-  transition: 150ms linear;
-  &:hover {
-    opacity: 0.8;
-  }
-  &:active {
-    opacity: 0.6;
-  }
-  @media screen and (max-width: 1200px) {
-    width: 27px;
-    height: 27px;
-  }
-`;
-
-const AirPlaneIcon = styled(PaperAirplane)`
-  width: 30px;
-  height: 30px;
-  color: #e9e9e9;
-  cursor: pointer;
-  transition: 150ms linear;
-  &:hover {
-    opacity: 0.8;
-  }
-  &:active {
-    opacity: 0.6;
-  }
-  @media screen and (max-width: 1200px) {
-    width: 27px;
-    height: 27px;
-  }
-`;
-
-const IconsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-`;
-
 const ScrollContainer = styled.div`
   height: 100%;
+  overflow-y: auto;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow-x: auto;
+  flex-flow: column nowrap;
   padding: 40px 25px;
   row-gap: 40px;
+  flex-direction: column-reverse;
+
+  & > :first-child {
+    margin-top: auto !important;
+  }
+
   &::-webkit-scrollbar {
     background: none;
     width: 5px;
@@ -229,14 +240,6 @@ const ScrollContainer = styled.div`
     padding: 15px 20px;
     row-gap: 20px;
   }
-`;
-
-const BottomMessageWrapper = styled.div`
-  min-height: fit-content;
-  display: flex;
-  border-top: rgba(255, 255, 255, 0.05) 1px solid;
-  column-gap: 10px;
-  padding: 15px;
 `;
 
 const Container = styled.div`
@@ -284,4 +287,4 @@ const Wrapper = styled.section`
   }
 `;
 
-export default ChatBlock;
+export default memo(ChatBlock);

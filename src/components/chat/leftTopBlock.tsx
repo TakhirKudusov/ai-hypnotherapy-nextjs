@@ -1,4 +1,3 @@
-import { montserrat } from "@/lib/fonts";
 import styled from "styled-components";
 import InformationList from "@/components/chat/informationList";
 
@@ -6,12 +5,10 @@ const LeftTopBlock = () => {
   return (
     <TopBlockWrapper>
       <TitleContainer>
-        <Title className={montserrat.className}>
+        <Title>
           HypnoGPT<AppText>app</AppText>
         </Title>
-        <SubTitle className={montserrat.className}>
-          Lorem ipsum dolor sit amet, consectetur
-        </SubTitle>
+        <SubTitle>Lorem ipsum dolor sit amet, consectetur</SubTitle>
       </TitleContainer>
       <StyledInformationList />
     </TopBlockWrapper>

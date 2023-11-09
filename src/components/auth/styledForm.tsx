@@ -1,6 +1,5 @@
 import { FC, memo, PropsWithChildren, SyntheticEvent, useId } from "react";
 import styled from "styled-components";
-import { montserrat } from "@/lib/fonts";
 
 type Props = {
   title: string;
@@ -16,7 +15,7 @@ const StyledForm: FC<PropsWithChildren<any> & Props> = ({
 
   return (
     <Wrapper>
-      <Title className={montserrat.className}>{title}</Title>
+      <Title>{title}</Title>
       <Form onSubmit={handleSubmit} id={uniqId}>
         {children}
       </Form>

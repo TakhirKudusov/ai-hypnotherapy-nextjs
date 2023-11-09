@@ -1,4 +1,3 @@
-import { montserrat } from "@/lib/fonts";
 import styled from "styled-components";
 import { CircleInfo } from "@styled-icons/fa-solid";
 import { FC, memo } from "react";
@@ -12,35 +11,35 @@ const InformationList: FC<Props> = ({ className }) => {
     <InfoContainer className={className}>
       <InfoRow>
         <InfoIcon />
-        <InfoText className={montserrat.className}>
+        <InfoText>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </InfoText>
       </InfoRow>
       <InfoRow>
         <InfoIcon />
-        <InfoText className={montserrat.className}>
+        <InfoText>
           Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
           nisi ut aliquip ex ea commodo consequat.
         </InfoText>
       </InfoRow>
       <InfoRow>
         <InfoIcon />
-        <InfoText className={montserrat.className}>
+        <InfoText>
           Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
           dolore eu fugiat nulla pariatur.
         </InfoText>
       </InfoRow>
       <InfoRow>
         <InfoIcon />
-        <InfoText className={montserrat.className}>
+        <InfoText>
           Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
           officia deserunt mollit anim id est laborum.
         </InfoText>
       </InfoRow>
       <InfoRow>
         <InfoIcon />
-        <InfoText className={montserrat.className}>
+        <InfoText>
           Sed ut perspiciatis unde omnis iste natus error sit voluptatem
           accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
           ab illo inventore veritatis et quasi architecto beatae vitae dicta

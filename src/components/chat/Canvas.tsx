@@ -1,11 +1,9 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { useMicVADWrapper } from "@/components/chat/utils/hooks/useMicVADWrapper";
 
 const Canvas = (props: any) => {
   const { draw, ...rest } = props;
   const canvasRef = useCanvas(draw);
-  useMicVADWrapper();
 
   return <StyledCanvas ref={canvasRef} width={450} height={450} {...rest} />;
 };

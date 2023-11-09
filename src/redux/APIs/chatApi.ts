@@ -1,6 +1,7 @@
 import { backendApi } from "@/redux/APIs/backendApi";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
+import { TTextMessage } from "@/redux/APIs/utils/types/response/TTextMessage";
 
 export const chatApi = backendApi.injectEndpoints({
   endpoints: (build) => ({
@@ -8,8 +9,14 @@ export const chatApi = backendApi.injectEndpoints({
       query: () => "/Chat/GetChat",
       providesTags: ["CHAT"],
       transformResponse: (data: TChatMessage[]) => {
+        data.push({
+          actor: 3,
+          text: "Приветственное сообщение от бота",
+          utcDateCreation: "1970-01-01T00:00:00.8158556Z",
+        });
+
         return data.sort((a, b) =>
-          a.utcDateCreation.localeCompare(b.utcDateCreation),
+          b.utcDateCreation.localeCompare(a.utcDateCreation),
         );
       },
     }),
@@ -20,17 +27,17 @@ export const chatApi = backendApi.injectEndpoints({
       }),
       invalidatesTags: ["CHAT"],
     }),
-    makeInterferenceFromText: build.mutation({
-      query: (body: TTextData) => ({
-        url: "/Chat/MakeInterferenceFromText",
+    makeInferenceFromText: build.mutation<TTextMessage, TTextData>({
+      query: (body) => ({
+        url: "/Chat/MakeInferenceFromText",
         method: "POST",
         body,
       }),
       invalidatesTags: ["CHAT"],
     }),
-    makeInterferenceFromAudio: build.mutation({
+    makeInferenceFromAudio: build.mutation({
       query: (body: any) => ({
-        url: "/Chat/MakeInterferenceFromAudio",
+        url: "/Chat/MakeInferenceFromAudio",
         method: "POST",
         body,
       }),
@@ -42,6 +49,6 @@ export const chatApi = backendApi.injectEndpoints({
 export const {
   useGetChatQuery,
   useStartNewDialogueMutation,
-  useMakeInterferenceFromAudioMutation,
-  useMakeInterferenceFromTextMutation,
+  useMakeInferenceFromAudioMutation,
+  useMakeInferenceFromTextMutation,
 } = chatApi;

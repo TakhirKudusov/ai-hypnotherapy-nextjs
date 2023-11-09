@@ -29,22 +29,18 @@ setLightBlue();
 const turnSpeed = () => (2 * Math.PI) / framesPerRotation; //the sphere will rotate at this speed (one complete rotation every 1600 frames).
 
 const onUserSpeaking = () => {
-  console.log("user speaking");
   framesPerRotation = 5000;
   setOrange();
 };
 const onProcessing = () => {
-  console.log("processing");
   framesPerRotation = 1000;
   setViolet();
 };
 const onAiSpeaking = () => {
-  console.log("ai speaking");
   framesPerRotation = 5000;
   setFuchsia();
 };
 const reset = () => {
-  console.log("reset");
   framesPerRotation = 5000;
   setLightBlue();
 };

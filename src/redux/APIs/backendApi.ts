@@ -1,19 +1,56 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
+import { TTokenData } from "@/redux/APIs/utils/types/response/TTokenData";
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: "/api",
+  credentials: "same-origin",
+  prepareHeaders: (headers) => {
+    const accessToken = localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN);
+    if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
+    return headers;
+  },
+});
 
 const staggeredBaseQueryWithFailOut = retry(
   async (args, api, extraOptions) => {
-    const result = await fetchBaseQuery({
-      baseUrl: "/api",
-      credentials: "same-origin",
-      prepareHeaders: (headers) => {
-        const accessToken = localStorage.getItem(
+    let result = await baseQuery(args, api, extraOptions);
+
+    if (result?.error?.status === 401) {
+      const refreshResult = await baseQuery(
+        {
+          url: "/Account/Refresh",
+          method: "POST",
+          body: {
+            accessToken: localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN),
+            refreshToken: localStorage.getItem(
+              LOCAL_STORAGE_ITEM.REFRESH_TOKEN,
+            ),
+          },
+        },
+        api,
+        extraOptions,
+      );
+
+      const refreshData = refreshResult.data as TTokenData | undefined;
+
+      if (refreshData) {
+        localStorage.setItem(
           LOCAL_STORAGE_ITEM.ACCESS_TOKEN,
+          refreshData[LOCAL_STORAGE_ITEM.ACCESS_TOKEN],
         );
-        if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
-        return headers;
-      },
-    })(args, api, extraOptions);
+        localStorage.setItem(
+          LOCAL_STORAGE_ITEM.REFRESH_TOKEN,
+          refreshData[LOCAL_STORAGE_ITEM.REFRESH_TOKEN],
+        );
+
+        result = await baseQuery(args, api, extraOptions);
+      } else {
+        localStorage.removeItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN);
+        localStorage.removeItem(LOCAL_STORAGE_ITEM.REFRESH_TOKEN);
+        location.replace("/");
+      }
+    }
 
     return result;
   },

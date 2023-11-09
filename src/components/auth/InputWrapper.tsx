@@ -1,6 +1,5 @@
 import { FC, memo, PropsWithChildren } from "react";
 import styled from "styled-components";
-import { montserrat } from "@/lib/fonts";
 
 type Props = {
   errorMessage: string;
@@ -15,9 +14,7 @@ const InputWrapper: FC<Props & PropsWithChildren<any>> = ({
   return (
     <Wrapper>
       {children}
-      {errorMessage && touched && (
-        <ErrorText className={montserrat.className}>{errorMessage}</ErrorText>
-      )}
+      {errorMessage && touched && <ErrorText>{errorMessage}</ErrorText>}
     </Wrapper>
   );
 };

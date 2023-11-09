@@ -3,7 +3,6 @@ import styled, { keyframes } from "styled-components";
 import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
 import { PanoramaPhotosphereSelect } from "@styled-icons/material";
 import { Face } from "@styled-icons/boxicons-regular";
-import { montserrat } from "@/lib/fonts";
 
 type Props = {
   emitter: MESSAGE_EMITTER;
@@ -18,20 +17,16 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
         {emitter === MESSAGE_EMITTER.BOT ? <BotIcon /> : <FaceIcon />}
       </AvatarWrapper>
       <TextWrapper>
-        <Title className={montserrat.className}>
-          {emitter === MESSAGE_EMITTER.BOT ? "HypnoAI" : "Вы"}
-        </Title>
+        <Title>{emitter === MESSAGE_EMITTER.BOT ? "HypnoAI" : "Вы"}</Title>
         <TextContainer emitter={emitter}>
           {isLoading ? (
-            <LoadingContainer>
+            <LoadingContainer emitter={emitter}>
               <FirstCircle />
               <SecondCircle />
               <ThirdCircle />
             </LoadingContainer>
           ) : (
-            <ChatText className={montserrat.className} emitter={emitter}>
-              {text}
-            </ChatText>
+            <ChatText emitter={emitter}>{text}</ChatText>
           )}
         </TextContainer>
       </TextWrapper>
@@ -104,9 +99,11 @@ const ThirdCircle = styled(LoadingCircle)`
   animation-name: ${thirdCircleAnimation};
 `;
 
-const LoadingContainer = styled.div`
+const LoadingContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`
   display: flex;
   column-gap: 5px;
+  flex-direction: ${({ emitter }) =>
+    emitter === MESSAGE_EMITTER.BOT ? "row" : "row-reverse"};
 `;
 
 const ChatText = styled.p<{ emitter: MESSAGE_EMITTER }>`

@@ -4,6 +4,7 @@ import StyledComponentsRegistry from "@/lib/registry";
 import "react-toastify/dist/ReactToastify.css";
 import { Flip, ToastContainer } from "react-toastify";
 import ReduxProvider from "@/redux/reduxProvider";
+import { montserrat } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: "AI Hypno App",
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={montserrat.className}>
       <body>
         <ReduxProvider>
           <StyledComponentsRegistry>

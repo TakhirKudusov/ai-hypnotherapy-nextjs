@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import BlockWrapper from "@/components/auth/blockWrapper";
-import { montserrat, spaceGrotesk } from "@/lib/fonts";
+import { spaceGrotesk } from "@/lib/fonts";
 import { TypeAnimation } from "react-type-animation";
 import { sequence } from "@/components/auth/utils/constants/sequence";
 
@@ -12,22 +12,19 @@ const RightBlock = () => {
           <Title className={spaceGrotesk.className}>
             AI Hypno<AppText className={spaceGrotesk.className}>app</AppText>
           </Title>
-          <SubTitle className={montserrat.className}>
-            Lorem ipsum dolor sit amet
-          </SubTitle>
+          <SubTitle>Lorem ipsum dolor sit amet</SubTitle>
         </TitleContainer>
         <WhiteBlock>
-          <WhiteBlockTitleContainer className={montserrat.className}>
+          <WhiteBlockTitleContainer>
             <WhiteBlockTopText>Представляем</WhiteBlockTopText>
             <WBTitleInnerContainer>
-              <WBTitle className={montserrat.className}>HypnoGPT</WBTitle>
+              <WBTitle>HypnoGPT</WBTitle>
               <WBSubTitle>Lorem ipsum dolor sit</WBSubTitle>
             </WBTitleInnerContainer>
           </WhiteBlockTitleContainer>
           <TextTypeWrapper>
             <TypeAnimation
               sequence={sequence}
-              className={montserrat.className}
               speed={65}
               deletionSpeed={70}
               cursor={false}
@@ -39,7 +36,7 @@ const RightBlock = () => {
             />
           </TextTypeWrapper>
         </WhiteBlock>
-        <BottomText className={montserrat.className}>
+        <BottomText>
           <EmojiSpan lg>👈</EmojiSpan> зарегистрируйтесь, чтобы попробовать{" "}
           <EmojiSpan sm>👇</EmojiSpan>
         </BottomText>

@@ -1,16 +1,14 @@
 import styled from "styled-components";
-import { montserrat } from "@/lib/fonts";
 import StyledButton from "@/UI kit/styledButton";
 import { BUTTON_SIZE } from "@/UI kit/styledButton/utils/enums/buttonSize.enum";
+import { memo } from "react";
 
 const LeftBottomBlock = () => {
   return (
     <Wrapper>
       <InfoContainer>
-        <Title className={montserrat.className}>
-          Lorem ipsum dolor sit amet, consectetur
-        </Title>
-        <Text className={montserrat.className}>
+        <Title>Lorem ipsum dolor sit amet, consectetur</Title>
+        <Text>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi
@@ -18,7 +16,7 @@ const LeftBottomBlock = () => {
         <Button text="пополнить" buttonSize={BUTTON_SIZE.SMALL} />
       </InfoContainer>
       <BannerBlock>
-        <BannerText className={montserrat.className}>
+        <BannerText>
           Lorem ipsum dolor sit amet, consectetur adipiscing
         </BannerText>
       </BannerBlock>
@@ -93,4 +91,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default LeftBottomBlock;
+export default memo(LeftBottomBlock);

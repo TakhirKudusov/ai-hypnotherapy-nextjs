@@ -10,7 +10,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://158.160.68.141/api/:path*",
+        destination: "https://geniusmind.dev/api/:path*",
       },
     ];
   },

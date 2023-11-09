@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import LeftTopBlock from "@/components/chat/leftTopBlock";
 import LeftBottomBlock from "@/components/chat/leftBottomBlock";
+import { memo } from "react";
 
 const InformationBlock = () => {
   return (
@@ -46,4 +47,4 @@ const Wrapper = styled.section`
   }
 `;
 
-export default InformationBlock;
+export default memo(InformationBlock);

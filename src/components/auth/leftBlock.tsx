@@ -1,7 +1,6 @@
 import { FORM_NAME } from "@/utils/enums/formNameEnum";
 import LoginForm from "@/components/auth/loginForm";
 import RegisterForm from "@/components/auth/registerForm";
-import { montserrat } from "@/lib/fonts";
 import StyledButton from "@/UI kit/styledButton";
 import { BUTTON_STYLE } from "@/UI kit/styledButton/utils/enums/ButtonStyle.enum";
 import { useMemo, useState } from "react";
@@ -52,7 +51,7 @@ const LeftBlock = () => {
           <RegisterForm formik={registerFormik} loading={loading} />
         )}
         <ChangeFormContainer>
-          <SubTitle className={montserrat.className}>{subTitleText}</SubTitle>
+          <SubTitle>{subTitleText}</SubTitle>
           <StyledButton
             text={changeFormBtnText}
             buttonStyle={BUTTON_STYLE.OUTLINED}

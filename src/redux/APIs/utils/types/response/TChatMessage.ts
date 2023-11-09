@@ -1,5 +1,6 @@
 export type TChatMessage = {
-  utcDateCreation: "string";
+  utcDateCreation: string;
   actor: 0 | 3;
-  text: "string";
+  text: string;
+  isLoading?: boolean;
 };
