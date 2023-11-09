@@ -13,14 +13,14 @@ import { ROUTES } from "@/routes/routes.enum";
 import { useWakeLock } from "react-screen-wake-lock";
 import {
   useGetChatQuery,
-  useMakeInferenceFromAudioMutation,
   useMakeInferenceFromTextMutation,
 } from "@/redux/APIs/chatApi";
-import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { handleSuccess } from "@/components/chat/speech-manager";
+import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 
 const PageContent = () => {
   const [sphereWorking, setSphereWorking] = useState<boolean>(false);
+  const [newMessages, setNewMessages] = useState<TChatMessage[]>([]);
 
   const router = useRouter();
 
@@ -28,8 +28,6 @@ const PageContent = () => {
 
   const [makeInterferenceFromText, textInterfData] =
     useMakeInferenceFromTextMutation();
-
-  const [_, audioData] = useMakeInferenceFromAudioMutation();
 
   useEffect(() => {
     const { data } = textInterfData;
@@ -39,27 +37,10 @@ const PageContent = () => {
     }
   }, [textInterfData.data]);
 
-  const messages = useMemo(() => {
-    if (!data) return [];
-    if (textInterfData.isLoading) {
-      let newData: TChatMessage[] = [
-        {
-          text: "",
-          utcDateCreation: new Date().getUTCDate().toString(),
-          actor: 3,
-          isLoading: true,
-        },
-        {
-          text: "",
-          utcDateCreation: new Date().getUTCDate().toString(),
-          actor: 0,
-          isLoading: true,
-        },
-      ];
-      return [...newData, ...data];
-    }
-    return data;
-  }, [data, textInterfData.isLoading, audioData.isLoading]);
+  const messages = useMemo(
+    () => (data ? [...newMessages, ...data] : newMessages),
+    [data, newMessages],
+  );
 
   const { isSupported, request } = useWakeLock({
     onRequest: () => console.log("Screen Wake Lock: requested!"),
@@ -96,6 +77,7 @@ const PageContent = () => {
             messages={messages}
             handleSpeechEnd={handleSpeechEnd}
             sendTextLoading={textInterfData.isLoading}
+            setNewMessages={setNewMessages}
           />
           <MobileContainer>
             <InformationList />

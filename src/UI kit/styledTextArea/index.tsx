@@ -43,7 +43,8 @@ const TextArea = styled.textarea`
   border: none;
   outline: none;
   resize: none;
-  min-height: 60px;
+  min-height: 70px;
+  max-height: 70px;
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -65,6 +66,7 @@ const TextArea = styled.textarea`
   }
   @media screen and (max-width: 1200px) {
     min-height: 59px;
+    max-height: 59px;
   }
 `;
 

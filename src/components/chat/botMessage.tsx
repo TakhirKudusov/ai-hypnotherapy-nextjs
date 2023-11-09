@@ -1,8 +1,9 @@
 import { FC, memo } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
 import { PanoramaPhotosphereSelect } from "@styled-icons/material";
 import { Face } from "@styled-icons/boxicons-regular";
+import { TypeAnimation } from "react-type-animation";
 
 type Props = {
   emitter: MESSAGE_EMITTER;
@@ -20,11 +21,18 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
         <Title>{emitter === MESSAGE_EMITTER.BOT ? "HypnoAI" : "Вы"}</Title>
         <TextContainer emitter={emitter}>
           {isLoading ? (
-            <LoadingContainer emitter={emitter}>
-              <FirstCircle />
-              <SecondCircle />
-              <ThirdCircle />
-            </LoadingContainer>
+            <TypeAnimation
+              wrapper="div"
+              sequence={[text]}
+              speed={30}
+              cursor={false}
+              repeat={1}
+              style={{
+                color: "white",
+                fontWeight: 500,
+                wordBreak: "break-all",
+              }}
+            />
           ) : (
             <ChatText emitter={emitter}>{text}</ChatText>
           )}
@@ -34,82 +42,11 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
   );
 };
 
-const thirdCircleAnimation = keyframes`
-  0%{
-    opacity: 1;
-  }
-  50%{
-    opacity: 1;
-  }
-  75%{
-    opacity: 0;
-  }
-  100%{
-    opacity: 0;
-  }
-`;
-
-const secondCircleAnimation = keyframes`
-  0%{
-    opacity: 1;
-  }
-  25%{
-    opacity: 1;
-  }
-  50%{
-    opacity: 0;
-  }
-  100%{
-    opacity: 0;
-  }
-`;
-
-const firstCircleAnimation = keyframes`
-  0%{
-    opacity: 1;
-  }
-  15%{
-    opacity: 1;
-  }
-  25%{
-    opacity: 0;
-  }
-  100%{
-    opacity: 0;
-  }
-`;
-
-const LoadingCircle = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
-  background-color: rgba(54, 56, 63, 0.85);
-  animation: 1s linear infinite;
-`;
-
-const FirstCircle = styled(LoadingCircle)`
-  animation-name: ${firstCircleAnimation};
-`;
-
-const SecondCircle = styled(LoadingCircle)`
-  animation-name: ${secondCircleAnimation};
-`;
-
-const ThirdCircle = styled(LoadingCircle)`
-  animation-name: ${thirdCircleAnimation};
-`;
-
-const LoadingContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`
-  display: flex;
-  column-gap: 5px;
-  flex-direction: ${({ emitter }) =>
-    emitter === MESSAGE_EMITTER.BOT ? "row" : "row-reverse"};
-`;
-
-const ChatText = styled.p<{ emitter: MESSAGE_EMITTER }>`
+const ChatText = styled.div<{ emitter: MESSAGE_EMITTER }>`
   line-height: 1.4;
   font-size: 13px;
   font-weight: 500;
+  word-break: break-all;
   color: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "black" : "white"};
   text-align: ${({ emitter }) =>

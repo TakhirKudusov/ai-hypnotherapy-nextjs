@@ -8,14 +8,14 @@ import {
   useState,
 } from "react";
 import StyledTextArea from "@/UI kit/styledTextArea";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Microphone, PaperAirplane } from "@styled-icons/heroicons-solid";
 import { toast } from "react-toastify";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
-import { onSpeechStart } from "@/components/chat/speech-manager";
-import { montserrat } from "@/lib/fonts";
-import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
 import clsx from "clsx";
+import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
+import { onSpeechStart } from "@/components/chat/speech-manager";
+import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 
 type Props = {
   text: string;
@@ -26,6 +26,7 @@ type Props = {
   stopRecord: () => void;
   sphereWorking: boolean;
   sendTextLoading: boolean;
+  setNewMessages: Dispatch<SetStateAction<TChatMessage[]>>;
 };
 
 const InputBlock: FC<Props> = ({
@@ -37,19 +38,22 @@ const InputBlock: FC<Props> = ({
   stopRecord,
   sphereWorking,
   sendTextLoading,
+  setNewMessages,
 }) => {
-  const [buttonState, setButtonState] = useState<"grey" | "green">("grey");
-  const [timer, setTimer] = useState<number>(60);
+  const [buttonState, setButtonState] = useState<"inactive" | "active">(
+    "inactive",
+  );
+  const [timer, setTimer] = useState<number>(600);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     let interval: NodeJS.Timeout;
 
-    if (buttonState === "green") {
+    if (buttonState === "active") {
       let time = timer;
-      interval = setInterval(() => setTimer(--time), 1_000);
+      interval = setInterval(() => setTimer(--time / 10), 100);
       timeout = setTimeout(() => {
-        setButtonState("grey");
+        setButtonState("inactive");
         stopRecord();
       }, 60_000);
     }
@@ -59,17 +63,23 @@ const InputBlock: FC<Props> = ({
     };
   }, [buttonState, stopRecord]);
 
-  const handleRecording = async () => {
+  useEffect(() => {
     if (sphereWorking) {
-      if (buttonState === "green") {
-        setButtonState("grey");
+    }
+  }, [sphereWorking, buttonState]);
+
+  const handleRecording = (type: "start" | "end") => async () => {
+    if (sphereWorking || type === "end") {
+      if (buttonState === "active") {
+        setButtonState("inactive");
         stopRecord();
+        return;
       }
       return;
     }
     await getLocalStreamHelper();
-    setTimer(60);
-    setButtonState("green");
+    setTimer(600);
+    setButtonState("active");
     setSphereWorking(true);
     startRecord();
     onSpeechStart();
@@ -79,6 +89,15 @@ const InputBlock: FC<Props> = ({
     if (!text.length || sphereWorking || sendTextLoading) return;
     try {
       makeInterferenceFromText({ text });
+      setNewMessages((prevState) => [
+        ...prevState,
+        {
+          utcDateCreation: new Date().getUTCDate().toString(),
+          actor: 0,
+          text,
+          isLoading: true,
+        },
+      ]);
       setText("");
     } catch (e) {
       console.error(e);
@@ -86,90 +105,146 @@ const InputBlock: FC<Props> = ({
     }
   };
 
-  const styles = useMemo(
+  const activeMicStyles = useMemo(
     () =>
       clsx({
-        disabled: sphereWorking,
+        active: buttonState === "active",
       }),
-    [sphereWorking],
+    [buttonState],
   );
 
   return (
     <BottomMessageWrapper>
-      <StyledTextArea
-        value={text}
-        name="text"
-        onChange={(e) => setText(e.currentTarget.value)}
-        placeholder="Задайте свой вопрос..."
-      />
+      <TextAreaWrapper>
+        {buttonState === "active" && (
+          <MicPointContainer>
+            <MicPoint />
+          </MicPointContainer>
+        )}
+        <TextArea
+          className={activeMicStyles}
+          value={buttonState === "inactive" ? text : "00:" + timer.toFixed(1)}
+          name="text"
+          onChange={(e) => setText(e.currentTarget.value)}
+          placeholder="Задайте свой вопрос..."
+        />
+      </TextAreaWrapper>
       <IconsContainer>
-        <AirPlaneIcon onClick={handlePlaneButtonClick} className={styles} />
-        <MicrophoneWrapper>
-          <MicrophoneIcon
-            buttonState={buttonState}
-            onClick={handleRecording}
-            className={styles}
-          />
-          {buttonState === "green" && (
-            <TimerTextWrapper>
-              <TimerText className={montserrat.className}>{timer}</TimerText>
-            </TimerTextWrapper>
-          )}
+        <AirPlaneIcon onClick={handlePlaneButtonClick} />
+        <MicrophoneWrapper
+          className={activeMicStyles}
+          onPointerDown={handleRecording("start")}
+          onPointerUp={handleRecording("end")}
+          onPointerOut={handleRecording("end")}
+        >
+          <MicrophoneIcon />
         </MicrophoneWrapper>
       </IconsContainer>
     </BottomMessageWrapper>
   );
 };
 
-const TimerTextWrapper = styled.div`
+const pointAnimation = keyframes`
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
+const MicPoint = styled.div`
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 7px;
+  background-color: #ff5050;
+  animation: ${pointAnimation} 1s linear infinite;
+`;
+
+const TextAreaWrapper = styled.div`
+  width: 100%;
+  display: flex;
+`;
+
+const MicPointContainer = styled.div`
   width: 0;
   height: 0;
   overflow: visible;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
-  right: 5px;
+  top: 35px;
+  left: 35px;
+  @media screen and (max-width: 1200px) {
+    top: 30px;
+  }
+`;
+
+const TextArea = styled(StyledTextArea)`
+  &.active {
+    padding: 25px 50px;
+    @media screen and (max-width: 1200px) {
+      padding: 20px 50px;
+    }
+  }
 `;
 
 const MicrophoneWrapper = styled.div`
   display: flex;
-  justify-content: flex-end;
-`;
-
-const TimerText = styled.p`
-  font-size: 10px;
-  color: #98e5a9;
-`;
-
-const MicrophoneIcon = styled(Microphone)<{ buttonState: "grey" | "green" }>`
-  width: 30px;
-  height: 30px;
-  color: ${({ buttonState }) =>
-    buttonState === "grey" ? "#e9e9e9" : "#98e5a9"};
-  cursor: pointer;
+  justify-content: center;
+  align-items: center;
   transition: 150ms linear;
+  border-radius: 50px;
+  cursor: pointer;
+
+  &.active {
+    animation: ${pointAnimation} 1.5s linear infinite;
+    background-color: #2aabee;
+    width: 45px;
+    min-height: 45px;
+    position: relative;
+    bottom: 8px;
+    right: 9px;
+    @media screen and (max-width: 1200px) {
+      width: 40px;
+      min-height: 40px;
+      bottom: 7px;
+      right: 7px;
+    }
+  }
+`;
+
+const MicrophoneIcon = styled(Microphone)`
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  color: #e9e9e9;
+  transition: 150ms linear;
+
   &:hover {
     opacity: 0.8;
   }
+
   &:active {
     opacity: 0.6;
   }
+
   @media screen and (max-width: 1200px) {
-    width: 27px;
-    height: 27px;
-  }
-  &.disabled {
-    opacity: 0.8;
-    &:hover {
-      opacity: 0.8;
-    }
-    &:active {
-      opacity: 0.8;
-    }
+    min-width: 27px;
+    min-height: 27px;
+    max-width: 27px;
+    max-height: 27px;
   }
 `;
 
 const AirPlaneIcon = styled(PaperAirplane)`
   width: 30px;
-  height: 30px;
+  min-height: 30px;
   color: #e9e9e9;
   cursor: pointer;
   transition: 150ms linear;
@@ -181,17 +256,7 @@ const AirPlaneIcon = styled(PaperAirplane)`
   }
   @media screen and (max-width: 1200px) {
     width: 27px;
-    height: 27px;
-  }
-
-  &.disabled {
-    opacity: 0.8;
-    &:hover {
-      opacity: 0.8;
-    }
-    &:active {
-      opacity: 0.8;
-    }
+    min-height: 27px;
   }
 `;
 
@@ -199,6 +264,12 @@ const IconsContainer = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
+  max-width: 27px;
+  max-height: 70px;
+  overflow: visible;
+  @media screen and (max-width: 1200px) {
+    max-height: 64px;
+  }
 `;
 
 const BottomMessageWrapper = styled.div`

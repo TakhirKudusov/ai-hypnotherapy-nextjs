@@ -148,7 +148,7 @@ const handleResponse = async (res: any) => {
   return data.voiceResponse;
 };
 
-const createBody = (data: string | Blob) => {
+const createBody = (data: Blob) => {
   const formData = new FormData();
   formData.append("audioFile", data, "audio.wav");
   return formData;

@@ -29,6 +29,7 @@ type Props = {
   setSphereWorking: Dispatch<SetStateAction<boolean>>;
   handleSpeechEnd: () => void;
   sendTextLoading: boolean;
+  setNewMessages: Dispatch<SetStateAction<TChatMessage[]>>;
 };
 
 const ChatBlock: FC<Props> = ({
@@ -40,6 +41,7 @@ const ChatBlock: FC<Props> = ({
   sphereWorking,
   handleSpeechEnd,
   sendTextLoading,
+  setNewMessages,
 }) => {
   const [text, setText] = useState<string>("");
   const [chatContainerHeight, setChatContainerHeight] = useState<string>("");
@@ -114,6 +116,7 @@ const ChatBlock: FC<Props> = ({
             )}
           </ScrollContainer>
           <InputBlock
+            setNewMessages={setNewMessages}
             sendTextLoading={sendTextLoading}
             sphereWorking={sphereWorking}
             makeInterferenceFromText={makeInterferenceFromText}
@@ -270,6 +273,7 @@ const Wrapper = styled.section`
   display: flex;
   height: 100%;
   flex-basis: 50%;
+  max-width: 50%;
   position: sticky;
   z-index: 1;
   top: 0;

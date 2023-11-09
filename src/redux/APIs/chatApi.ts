@@ -33,7 +33,6 @@ export const chatApi = backendApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["CHAT"],
     }),
     makeInferenceFromAudio: build.mutation({
       query: (body: any) => ({
@@ -41,7 +40,6 @@ export const chatApi = backendApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["CHAT"],
     }),
   }),
 });
