@@ -22,15 +22,16 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
         <TextContainer emitter={emitter}>
           {isLoading ? (
             <TypeAnimation
-              wrapper="div"
+              wrapper="p"
               sequence={[text]}
-              speed={30}
+              speed={70}
               cursor={false}
               repeat={1}
               style={{
-                color: "white",
+                color: emitter === MESSAGE_EMITTER.BOT ? "black" : "white",
                 fontWeight: 500,
-                wordBreak: "break-all",
+                lineHeight: 1.4,
+                fontSize: "13px",
               }}
             />
           ) : (
@@ -42,18 +43,14 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
   );
 };
 
-const ChatText = styled.div<{ emitter: MESSAGE_EMITTER }>`
+const ChatText = styled.p<{ emitter: MESSAGE_EMITTER }>`
   line-height: 1.4;
   font-size: 13px;
   font-weight: 500;
-  word-break: break-all;
   color: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "black" : "white"};
   text-align: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "start" : "end"};
-  @media screen and (max-width: 1200px) {
-    font-size: 11px;
-  }
 `;
 
 const TextContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`
@@ -75,9 +72,6 @@ const Title = styled.p`
   color: #f7f7f7;
   font-size: 12px;
   font-weight: 500;
-  @media screen and (max-width: 1200px) {
-    font-size: 11px;
-  }
 `;
 
 const TextWrapper = styled.div`

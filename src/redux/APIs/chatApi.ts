@@ -2,6 +2,7 @@ import { backendApi } from "@/redux/APIs/backendApi";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
 import { TTextMessage } from "@/redux/APIs/utils/types/response/TTextMessage";
+import { v1 } from "uuid";
 
 export const chatApi = backendApi.injectEndpoints({
   endpoints: (build) => ({
@@ -13,11 +14,15 @@ export const chatApi = backendApi.injectEndpoints({
           actor: 3,
           text: "Приветственное сообщение от бота",
           utcDateCreation: "1970-01-01T00:00:00.8158556Z",
+          key: v1(),
         });
 
-        return data.sort((a, b) =>
-          b.utcDateCreation.localeCompare(a.utcDateCreation),
-        );
+        return data
+          .map((el) => {
+            el.key = v1();
+            return el;
+          })
+          .sort((a, b) => b.utcDateCreation.localeCompare(a.utcDateCreation));
       },
     }),
     startNewDialogue: build.mutation({

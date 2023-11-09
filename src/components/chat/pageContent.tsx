@@ -17,6 +17,7 @@ import {
 } from "@/redux/APIs/chatApi";
 import { handleSuccess } from "@/components/chat/speech-manager";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
+import { v1 } from "uuid";
 
 const PageContent = () => {
   const [sphereWorking, setSphereWorking] = useState<boolean>(false);
@@ -32,13 +33,23 @@ const PageContent = () => {
   useEffect(() => {
     const { data } = textInterfData;
     if (data) {
+      setNewMessages((prevState) => [
+        {
+          utcDateCreation: new Date().getUTCDate().toString(),
+          actor: 3,
+          text: data.textResponse,
+          isLoading: true,
+          key: v1(),
+        },
+        ...prevState,
+      ]);
       setSphereWorking(true);
       handleSuccess(handleSpeechEnd)(data.voiceResponse);
     }
   }, [textInterfData.data]);
 
   const messages = useMemo(
-    () => (data ? [...newMessages, ...data] : newMessages),
+    () => (data ? [...newMessages.reverse(), ...data] : newMessages),
     [data, newMessages],
   );
 
@@ -62,6 +73,19 @@ const PageContent = () => {
     setSphereWorking(false);
   };
 
+  const handleNewMessage = (text: string) => {
+    setNewMessages((prevState) => [
+      {
+        utcDateCreation: new Date().getUTCDate().toString(),
+        actor: 3,
+        text,
+        isLoading: true,
+        key: v1(),
+      },
+      ...prevState,
+    ]);
+  };
+
   return (
     <>
       {/*<Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js" />*/}
@@ -78,6 +102,7 @@ const PageContent = () => {
             handleSpeechEnd={handleSpeechEnd}
             sendTextLoading={textInterfData.isLoading}
             setNewMessages={setNewMessages}
+            handleNewMessage={handleNewMessage}
           />
           <MobileContainer>
             <InformationList />

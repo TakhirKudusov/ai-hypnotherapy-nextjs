@@ -30,6 +30,7 @@ type Props = {
   handleSpeechEnd: () => void;
   sendTextLoading: boolean;
   setNewMessages: Dispatch<SetStateAction<TChatMessage[]>>;
+  handleNewMessage: (text: string) => void;
 };
 
 const ChatBlock: FC<Props> = ({
@@ -42,6 +43,7 @@ const ChatBlock: FC<Props> = ({
   handleSpeechEnd,
   sendTextLoading,
   setNewMessages,
+  handleNewMessage,
 }) => {
   const [text, setText] = useState<string>("");
   const [chatContainerHeight, setChatContainerHeight] = useState<string>("");
@@ -83,6 +85,7 @@ const ChatBlock: FC<Props> = ({
 
   const handleStartNewDDialogueClick = async () => {
     if (sphereWorking) return;
+    setNewMessages([]);
     await startNewDialogue(null);
   };
 
@@ -136,7 +139,10 @@ const ChatBlock: FC<Props> = ({
                 audioBitsPerSecond: 128000,
               }}
               recorderControls={recorderControls}
-              onRecordingComplete={onSpeechEnd(handleSpeechEnd)}
+              onRecordingComplete={onSpeechEnd(
+                handleSpeechEnd,
+                handleNewMessage,
+              )}
               onNotAllowedOrFound={() => console.error("NOT ALLOWED RECORDING")}
             />
           </RecorderWrapper>
@@ -216,7 +222,7 @@ const CanvasContainer = styled.div`
 
 const ScrollContainer = styled.div`
   height: 100%;
-  overflow-y: auto;
+  overflow: auto;
   display: flex;
   flex-flow: column nowrap;
   padding: 40px 25px;
@@ -230,6 +236,7 @@ const ScrollContainer = styled.div`
   &::-webkit-scrollbar {
     background: none;
     width: 5px;
+    height: 5px;
   }
   &::-webkit-scrollbar-thumb {
     background: rgb(170, 170, 170);
@@ -273,7 +280,7 @@ const Wrapper = styled.section`
   display: flex;
   height: 100%;
   flex-basis: 50%;
-  max-width: 50%;
+  max-width: calc(50% - 30px);
   position: sticky;
   z-index: 1;
   top: 0;
@@ -285,6 +292,7 @@ const Wrapper = styled.section`
     padding-bottom: 0;
     height: 650px;
     flex-basis: unset;
+    max-width: unset;
   }
   @media screen and (max-width: 425px) {
     height: 550px;

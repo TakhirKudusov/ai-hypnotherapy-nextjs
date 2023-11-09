@@ -5,7 +5,7 @@ const Canvas = (props: any) => {
   const { draw, ...rest } = props;
   const canvasRef = useCanvas(draw);
 
-  return <StyledCanvas ref={canvasRef} width={450} height={450} {...rest} />;
+  return <StyledCanvas ref={canvasRef} width={500} height={500} {...rest} />;
 };
 
 const useCanvas = (draw: any) => {
@@ -41,7 +41,7 @@ const useCanvas = (draw: any) => {
 };
 
 const StyledCanvas = styled.canvas`
-  width: 90%;
+  width: 85%;
   border-radius: 10px;
   @media screen and (max-width: 425px) {
     width: 100%;

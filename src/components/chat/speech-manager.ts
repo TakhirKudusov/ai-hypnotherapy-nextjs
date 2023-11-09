@@ -13,8 +13,11 @@ export const onSpeechStart = () => {
 };
 
 export const onSpeechEnd =
-  (handleSpeechEnd: () => void) => async (audio: Blob) => {
-    await processAudio(audio, handleSpeechEnd);
+  (handleSpeechEnd: () => void, setNewMessage: (text: string) => void) =>
+  async (audio: Blob) => {
+    console.log(audio);
+    if (!audio) return particleActions.reset();
+    await processAudio(audio, handleSpeechEnd, setNewMessage);
   };
 
 export const onMisfire = () => {
@@ -28,11 +31,15 @@ const stopSourceIfNeeded = () => {
   }
 };
 
-const processAudio = async (audio: Blob, handleSpeechEnd: () => void) => {
+const processAudio = async (
+  audio: Blob,
+  handleSpeechEnd: () => void,
+  setNewMessage: (text: string) => void,
+) => {
   try {
     // const blob = await encodeWAV(audio);
     await validate(audio);
-    sendData(audio, handleSpeechEnd);
+    sendData(audio, handleSpeechEnd, setNewMessage);
     particleActions.onProcessing();
   } catch (e) {
     console.log(e);
@@ -116,12 +123,16 @@ const encodeWAV = async (audio: Blob) => {
   return new Blob([wavBuffer], { type: "audio/wav" });
 };
 
-const sendData = (blob: Blob, handleSpeechEnd: () => void) => {
+const sendData = (
+  blob: Blob,
+  handleSpeechEnd: () => void,
+  setNewMessage: (text: string) => void,
+) => {
   store
     .dispatch(
       chatApi.endpoints.makeInferenceFromAudio.initiate(createBody(blob)),
     )
-    .then(handleResponse)
+    .then(handleResponse(setNewMessage))
     .then(handleSuccess(handleSpeechEnd))
     .catch(handleError);
 };
@@ -140,13 +151,15 @@ const sendData = (blob: Blob, handleSpeechEnd: () => void) => {
 //   return new TextDecoder().decode(bytes);
 // }
 
-const handleResponse = async (res: any) => {
-  const { data } = res;
-  if (!data) {
-    throw new Error("Request err. No data received.");
-  }
-  return data.voiceResponse;
-};
+const handleResponse =
+  (setNewMessage: (text: string) => void) => async (res: any) => {
+    const { data } = res;
+    if (!data) {
+      throw new Error("Request err. No data received.");
+    }
+    setNewMessage(data.textResponse);
+    return data.voiceResponse;
+  };
 
 const createBody = (data: Blob) => {
   const formData = new FormData();

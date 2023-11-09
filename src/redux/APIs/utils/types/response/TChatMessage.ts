@@ -3,4 +3,5 @@ export type TChatMessage = {
   actor: 0 | 3;
   text: string;
   isLoading?: boolean;
+  key: string;
 };

@@ -13,9 +13,10 @@ import { Microphone, PaperAirplane } from "@styled-icons/heroicons-solid";
 import { toast } from "react-toastify";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
 import clsx from "clsx";
-import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
-import { onSpeechStart } from "@/components/chat/speech-manager";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
+import numeral from "numeral";
+import { v1 } from "uuid";
+import { onSpeechStart } from "@/components/chat/speech-manager";
 
 type Props = {
   text: string;
@@ -43,15 +44,18 @@ const InputBlock: FC<Props> = ({
   const [buttonState, setButtonState] = useState<"inactive" | "active">(
     "inactive",
   );
-  const [timer, setTimer] = useState<number>(600);
+  const [timer, setTimer] = useState<string>("600");
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     let interval: NodeJS.Timeout;
 
     if (buttonState === "active") {
-      let time = timer;
-      interval = setInterval(() => setTimer(--time / 10), 100);
+      let time = 600;
+      interval = setInterval(() => {
+        time -= 1;
+        setTimer(numeral(time / 10).format("00.0"));
+      }, 100);
       timeout = setTimeout(() => {
         setButtonState("inactive");
         stopRecord();
@@ -64,21 +68,17 @@ const InputBlock: FC<Props> = ({
   }, [buttonState, stopRecord]);
 
   useEffect(() => {
-    if (sphereWorking) {
-    }
-  }, [sphereWorking, buttonState]);
+    if (buttonState === "inactive") stopRecord();
+  }, [buttonState]);
 
-  const handleRecording = (type: "start" | "end") => async () => {
-    if (sphereWorking || type === "end") {
-      if (buttonState === "active") {
-        setButtonState("inactive");
-        stopRecord();
-        return;
-      }
-      return;
-    }
-    await getLocalStreamHelper();
-    setTimer(600);
+  const handleStopRecording = () => {
+    if (buttonState === "inactive" && sphereWorking) return;
+    setTimeout(() => setButtonState("inactive"), 400);
+  };
+
+  const handleStartRecording = async () => {
+    if (sphereWorking) return;
+    setTimer("600");
     setButtonState("active");
     setSphereWorking(true);
     startRecord();
@@ -90,13 +90,14 @@ const InputBlock: FC<Props> = ({
     try {
       makeInterferenceFromText({ text });
       setNewMessages((prevState) => [
-        ...prevState,
         {
           utcDateCreation: new Date().getUTCDate().toString(),
           actor: 0,
           text,
           isLoading: true,
+          key: v1(),
         },
+        ...prevState,
       ]);
       setText("");
     } catch (e) {
@@ -123,7 +124,7 @@ const InputBlock: FC<Props> = ({
         )}
         <TextArea
           className={activeMicStyles}
-          value={buttonState === "inactive" ? text : "00:" + timer.toFixed(1)}
+          value={buttonState === "inactive" ? text : "00:" + timer}
           name="text"
           onChange={(e) => setText(e.currentTarget.value)}
           placeholder="Задайте свой вопрос..."
@@ -132,10 +133,12 @@ const InputBlock: FC<Props> = ({
       <IconsContainer>
         <AirPlaneIcon onClick={handlePlaneButtonClick} />
         <MicrophoneWrapper
+          draggable="false"
           className={activeMicStyles}
-          onPointerDown={handleRecording("start")}
-          onPointerUp={handleRecording("end")}
-          onPointerOut={handleRecording("end")}
+          onPointerDown={handleStartRecording}
+          onPointerUp={handleStopRecording}
+          onMouseLeave={handleStopRecording}
+          onDrag={(e) => e.preventDefault()}
         >
           <MicrophoneIcon />
         </MicrophoneWrapper>
@@ -200,7 +203,9 @@ const MicrophoneWrapper = styled.div`
   transition: 150ms linear;
   border-radius: 50px;
   cursor: pointer;
-
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
   &.active {
     animation: ${pointAnimation} 1.5s linear infinite;
     background-color: #2aabee;

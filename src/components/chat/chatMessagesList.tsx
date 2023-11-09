@@ -13,7 +13,7 @@ const ChatMessagesList: FC<Props> = ({ messages }) => {
       {messages.map((el) => {
         return (
           <BotMessage
-            key={el.utcDateCreation + el.actor}
+            key={el.key}
             emitter={
               el.actor === 0 ? MESSAGE_EMITTER.USER : MESSAGE_EMITTER.BOT
             }
