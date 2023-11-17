@@ -17,6 +17,7 @@ import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import numeral from "numeral";
 import { v1 } from "uuid";
 import { onSpeechStart } from "@/components/chat/speech-manager";
+import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
 
 type Props = {
   text: string;
@@ -45,6 +46,19 @@ const InputBlock: FC<Props> = ({
     "inactive",
   );
   const [timer, setTimer] = useState<string>("600");
+  const [focused, setFocus] = useState<boolean>(false);
+
+  const handleKeyEvent = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && focused) handlePlaneButtonClick();
+  };
+
+  useEffect(() => {
+    getLocalStreamHelper();
+    if (typeof window !== "undefined")
+      window.addEventListener("keydown", handleKeyEvent);
+
+    return () => window.removeEventListener("keydown", handleKeyEvent);
+  }, [handleKeyEvent]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -77,6 +91,7 @@ const InputBlock: FC<Props> = ({
   };
 
   const handleStartRecording = async () => {
+    await getLocalStreamHelper();
     if (sphereWorking) return;
     setTimer("600");
     setButtonState("active");
@@ -114,6 +129,14 @@ const InputBlock: FC<Props> = ({
     [buttonState],
   );
 
+  const isDisabled = useMemo(
+    () =>
+      clsx({
+        disabled: sphereWorking || sendTextLoading,
+      }),
+    [sphereWorking, sendTextLoading],
+  );
+
   return (
     <BottomMessageWrapper>
       <TextAreaWrapper>
@@ -128,10 +151,12 @@ const InputBlock: FC<Props> = ({
           name="text"
           onChange={(e) => setText(e.currentTarget.value)}
           placeholder="Задайте свой вопрос..."
+          onBlur={() => setFocus(false)}
+          onFocus={() => setFocus(true)}
         />
       </TextAreaWrapper>
-      <IconsContainer>
-        <AirPlaneIcon onClick={handlePlaneButtonClick} />
+      <IconsContainer onDrag={(e) => e.preventDefault()}>
+        <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
         <MicrophoneWrapper
           draggable="false"
           className={activeMicStyles}
@@ -140,7 +165,7 @@ const InputBlock: FC<Props> = ({
           onMouseLeave={handleStopRecording}
           onDrag={(e) => e.preventDefault()}
         >
-          <MicrophoneIcon />
+          <MicrophoneIcon className={isDisabled} />
         </MicrophoneWrapper>
       </IconsContainer>
     </BottomMessageWrapper>
@@ -231,6 +256,10 @@ const MicrophoneIcon = styled(Microphone)`
   color: #e9e9e9;
   transition: 150ms linear;
 
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
+
   &:hover {
     opacity: 0.8;
   }
@@ -244,6 +273,16 @@ const MicrophoneIcon = styled(Microphone)`
     min-height: 27px;
     max-width: 27px;
     max-height: 27px;
+  }
+
+  &.disabled {
+    opacity: 0.8;
+    &:hover {
+      opacity: 0.8;
+    }
+    &:active {
+      opacity: 0.8;
+    }
   }
 `;
 
@@ -262,6 +301,16 @@ const AirPlaneIcon = styled(PaperAirplane)`
   @media screen and (max-width: 1200px) {
     width: 27px;
     min-height: 27px;
+  }
+
+  &.disabled {
+    opacity: 0.8;
+    &:hover {
+      opacity: 0.8;
+    }
+    &:active {
+      opacity: 0.8;
+    }
   }
 `;
 

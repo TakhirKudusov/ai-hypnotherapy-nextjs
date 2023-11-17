@@ -3,8 +3,14 @@ import { chatApi } from "@/redux/APIs/chatApi";
 import { store } from "@/redux/store";
 import { utils } from "@ricky0123/vad-web";
 import { TTextMessage } from "@/redux/APIs/utils/types/response/TTextMessage";
+import {
+  AudioContext,
+  IAudioBufferSourceNode,
+  IAudioContext,
+} from "standardized-audio-context";
+import { Howl } from "howler";
 
-let source: AudioBufferSourceNode;
+let source: IAudioBufferSourceNode<IAudioContext>;
 let sourceIsStarted = false;
 
 export const onSpeechStart = () => {
@@ -13,7 +19,10 @@ export const onSpeechStart = () => {
 };
 
 export const onSpeechEnd =
-  (handleSpeechEnd: () => void, setNewMessage: (text: string) => void) =>
+  (
+    handleSpeechEnd: () => void,
+    setNewMessage: (botText: string, userText?: string) => void,
+  ) =>
   async (audio: Blob) => {
     console.log(audio);
     if (!audio) return particleActions.reset();
@@ -34,7 +43,7 @@ const stopSourceIfNeeded = () => {
 const processAudio = async (
   audio: Blob,
   handleSpeechEnd: () => void,
-  setNewMessage: (text: string) => void,
+  setNewMessage: (botText: string, userText?: string) => void,
 ) => {
   try {
     // const blob = await encodeWAV(audio);
@@ -126,7 +135,7 @@ const encodeWAV = async (audio: Blob) => {
 const sendData = (
   blob: Blob,
   handleSpeechEnd: () => void,
-  setNewMessage: (text: string) => void,
+  setNewMessage: (botText: string, userText?: string) => void,
 ) => {
   store
     .dispatch(
@@ -134,7 +143,10 @@ const sendData = (
     )
     .then(handleResponse(setNewMessage))
     .then(handleSuccess(handleSpeechEnd))
-    .catch(handleError);
+    .catch((message: any) => {
+      handleSpeechEnd();
+      handleError(message);
+    });
 };
 
 // function base64Encode(str: string) {
@@ -152,12 +164,14 @@ const sendData = (
 // }
 
 const handleResponse =
-  (setNewMessage: (text: string) => void) => async (res: any) => {
+  (setNewMessage: (botText: string, userText?: string) => void) =>
+  async (res: any) => {
     const { data } = res;
     if (!data) {
       throw new Error("Request err. No data received.");
     }
-    setNewMessage(data.textResponse);
+
+    setNewMessage(data.textResponse, data?.userRequestText);
     return data.voiceResponse;
   };
 
@@ -189,42 +203,63 @@ export const handleSuccess =
   (handleSpeechEnd: () => void) =>
   async (data: TTextMessage["voiceResponse"]) => {
     if (typeof window !== "undefined") {
-      const audioContext = new (window.AudioContext ||
-        window.webkitAudioContext)();
+      const audioContext = new AudioContext();
 
       const { base64Content, contentType } = data;
 
-      // const byteCharacters = Buffer.from(base64Content, "utf8").toString("base64");
-      //
-      // const byteNumbers = new Array(byteCharacters.length);
-      //
-      // for (let i = 0; i < byteCharacters.length; i++) {
-      //   byteNumbers[i] = byteCharacters.charCodeAt(i);
-      // }
-      //
-      // const byteArray = new Uint8Array(byteNumbers);
-      //
-      // const blob = new Blob([byteArray], { type: contentType });
-
       const base64Data = `data:${contentType};base64,${base64Content}`;
 
-      const binary = convertDataURIToBinary(base64Data);
-
-      const blob = new Blob([binary], { type: contentType });
+      // const binary = convertDataURIToBinary(base64Data);
+      //
+      // const blob = new Blob([binary], { type: contentType });
 
       stopSourceIfNeeded();
 
-      source = audioContext.createBufferSource();
-      source.buffer = await audioContext.decodeAudioData(
-        await blob.arrayBuffer(),
-      );
-      source.connect(audioContext.destination);
-      source.start(0);
-      sourceIsStarted = true;
-      source.onended = () => {
-        particleActions.reset();
-        handleSpeechEnd();
-      };
+      // source = audioContext.createBufferSource();
+      // source.buffer = await audioContext.decodeAudioData(
+      //   await blob.arrayBuffer(),
+      // );
+      // source.connect(audioContext.destination);
+      // source.start(0);
+      // sourceIsStarted = true;
+      // source.onended = () => {
+      //   particleActions.reset();
+      //   handleSpeechEnd();
+      // };
+
+      // const audio = document.createElement("audio");
+      // const source = document.createElement("source");
+      //
+      // audio.append(source);
+      // document.body.append(audio);
+      //
+      // source.src = base64Data;
+      // await audio.play();
+      // sourceIsStarted = true;
+      // audio.onended = () => {
+      //   particleActions.reset();
+      //   handleSpeechEnd();
+      // audio.remove();
+      // };
+
+      const sound = new Howl({
+        src: base64Data,
+        html5: true,
+        autoplay: true,
+        volume: 0.5,
+        onend: () => {
+          particleActions.reset();
+          handleSpeechEnd();
+        },
+        onplayerror: () => {
+          handleSpeechEnd();
+        },
+        onloaderror: () => {
+          handleSpeechEnd();
+        },
+      });
+
+      sound.play();
 
       particleActions.onAiSpeaking();
     } else {

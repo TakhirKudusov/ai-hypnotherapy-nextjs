@@ -7,6 +7,8 @@ type Props = {
   name: string;
   value: string | number;
   onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   className?: string;
   required?: boolean;
 };
@@ -18,6 +20,8 @@ const StyledTextArea: FC<Props> = ({
   className,
   value,
   onChange,
+  onBlur,
+  onFocus,
 }) => {
   return (
     <TextArea
@@ -27,6 +31,8 @@ const StyledTextArea: FC<Props> = ({
       required={required}
       value={value}
       onChange={onChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
     />
   );
 };

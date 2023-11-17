@@ -32,6 +32,7 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
                 fontWeight: 500,
                 lineHeight: 1.4,
                 fontSize: "13px",
+                direction: "ltr",
               }}
             />
           ) : (
@@ -51,6 +52,7 @@ const ChatText = styled.p<{ emitter: MESSAGE_EMITTER }>`
     emitter === MESSAGE_EMITTER.BOT ? "black" : "white"};
   text-align: ${({ emitter }) =>
     emitter === MESSAGE_EMITTER.BOT ? "start" : "end"};
+  direction: ltr;
 `;
 
 const TextContainer = styled.div<{ emitter: MESSAGE_EMITTER }>`

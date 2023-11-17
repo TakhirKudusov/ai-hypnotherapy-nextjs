@@ -73,12 +73,24 @@ const PageContent = () => {
     setSphereWorking(false);
   };
 
-  const handleNewMessage = (text: string) => {
+  const handleNewMessage = (botText: string, userText?: string) => {
+    if (userText) {
+      setNewMessages((prevState) => [
+        {
+          utcDateCreation: new Date().getUTCDate().toString(),
+          actor: 0,
+          text: userText,
+          isLoading: true,
+          key: v1(),
+        },
+        ...prevState,
+      ]);
+    }
     setNewMessages((prevState) => [
       {
         utcDateCreation: new Date().getUTCDate().toString(),
         actor: 3,
-        text,
+        text: botText,
         isLoading: true,
         key: v1(),
       },
@@ -88,7 +100,6 @@ const PageContent = () => {
 
   return (
     <>
-      {/*<Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js" />*/}
       <Main>
         <ContentWrapper>
           <InformationBlock />
