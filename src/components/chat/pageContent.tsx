@@ -15,9 +15,11 @@ import {
   useGetChatQuery,
   useMakeInferenceFromTextMutation,
 } from "@/redux/APIs/chatApi";
-import { handleSuccess } from "@/components/chat/speech-manager";
+import { handleSuccess, onSpeechEnd } from "@/components/chat/speech-manager";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { v1 } from "uuid";
+import { THandleNewMessage } from "@/utils/types/THandleNewMessage";
+import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 
 const PageContent = () => {
   const [sphereWorking, setSphereWorking] = useState<boolean>(false);
@@ -37,19 +39,19 @@ const PageContent = () => {
         {
           utcDateCreation: new Date().getUTCDate().toString(),
           actor: 3,
-          text: data.textResponse,
+          text: data.data.textResponse,
           isLoading: true,
           key: v1(),
         },
         ...prevState,
       ]);
       setSphereWorking(true);
-      handleSuccess(handleSpeechEnd)(data.voiceResponse);
+      handleSuccess(handleSpeechEnd)(data.data.voiceResponse.recordUid);
     }
   }, [textInterfData.data]);
 
   const messages = useMemo(
-    () => (data ? [...newMessages.reverse(), ...data] : newMessages),
+    () => (data ? [...newMessages.reverse(), ...data.data] : newMessages),
     [data, newMessages],
   );
 
@@ -73,29 +75,21 @@ const PageContent = () => {
     setSphereWorking(false);
   };
 
-  const handleNewMessage = (botText: string, userText?: string) => {
-    if (userText) {
-      setNewMessages((prevState) => [
-        {
-          utcDateCreation: new Date().getUTCDate().toString(),
-          actor: 0,
-          text: userText,
-          isLoading: true,
-          key: v1(),
-        },
-        ...prevState,
-      ]);
-    }
+  const handleNewMessage: THandleNewMessage = (text, actor) => {
     setNewMessages((prevState) => [
       {
         utcDateCreation: new Date().getUTCDate().toString(),
-        actor: 3,
-        text: botText,
+        actor,
+        text,
         isLoading: true,
         key: v1(),
       },
       ...prevState,
     ]);
+  };
+
+  const handleEndRecord: THandleEndRecord = async (blob) => {
+    await onSpeechEnd(handleSpeechEnd, handleNewMessage, blob);
   };
 
   return (
@@ -110,10 +104,11 @@ const PageContent = () => {
             isError={isError}
             isLoading={isLoading}
             messages={messages}
-            handleSpeechEnd={handleSpeechEnd}
+            // handleSpeechEnd={handleSpeechEnd}
             sendTextLoading={textInterfData.isLoading}
             setNewMessages={setNewMessages}
-            handleNewMessage={handleNewMessage}
+            // handleNewMessage={handleNewMessage}
+            handleEndRecord={handleEndRecord}
           />
           <MobileContainer>
             <InformationList />

@@ -3,6 +3,7 @@ import {
   FC,
   memo,
   SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -29,6 +30,7 @@ type Props = {
   sphereWorking: boolean;
   sendTextLoading: boolean;
   setNewMessages: Dispatch<SetStateAction<TChatMessage[]>>;
+  setMic: Dispatch<SetStateAction<"stop" | "start" | "dropped" | undefined>>;
 };
 
 const InputBlock: FC<Props> = ({
@@ -41,24 +43,13 @@ const InputBlock: FC<Props> = ({
   sphereWorking,
   sendTextLoading,
   setNewMessages,
+  setMic,
 }) => {
   const [buttonState, setButtonState] = useState<"inactive" | "active">(
     "inactive",
   );
   const [timer, setTimer] = useState<string>("600");
   const [focused, setFocus] = useState<boolean>(false);
-
-  const handleKeyEvent = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && focused) handlePlaneButtonClick();
-  };
-
-  useEffect(() => {
-    getLocalStreamHelper();
-    if (typeof window !== "undefined")
-      window.addEventListener("keydown", handleKeyEvent);
-
-    return () => window.removeEventListener("keydown", handleKeyEvent);
-  }, [handleKeyEvent]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -72,7 +63,9 @@ const InputBlock: FC<Props> = ({
       }, 100);
       timeout = setTimeout(() => {
         setButtonState("inactive");
-        stopRecord();
+        queueMicrotask(() => {
+          stopRecord();
+        });
       }, 60_000);
     }
     return () => {
@@ -82,12 +75,26 @@ const InputBlock: FC<Props> = ({
   }, [buttonState, stopRecord]);
 
   useEffect(() => {
-    if (buttonState === "inactive") stopRecord();
-  }, [buttonState]);
+    if (buttonState === "inactive")
+      queueMicrotask(() => {
+        stopRecord();
+      });
+  }, [buttonState, stopRecord]);
 
   const handleStopRecording = () => {
     if (buttonState === "inactive" && sphereWorking) return;
-    setTimeout(() => setButtonState("inactive"), 400);
+    setMic("stop");
+    setTimeout(() => {
+      setButtonState("inactive");
+    }, 300);
+  };
+
+  const handleDropRecording = () => {
+    if (buttonState === "inactive" && sphereWorking) return;
+    setMic("dropped");
+    setTimeout(() => {
+      setButtonState("inactive");
+    }, 300);
   };
 
   const handleStartRecording = async () => {
@@ -100,7 +107,7 @@ const InputBlock: FC<Props> = ({
     onSpeechStart();
   };
 
-  const handlePlaneButtonClick = () => {
+  const handlePlaneButtonClick = useCallback(() => {
     if (!text.length || sphereWorking || sendTextLoading) return;
     try {
       makeInterferenceFromText({ text });
@@ -119,7 +126,21 @@ const InputBlock: FC<Props> = ({
       console.error(e);
       toast.error("Что-то пошло не так. Пожалуйста, попробуйте снова позже.");
     }
-  };
+  }, [
+    makeInterferenceFromText,
+    sendTextLoading,
+    setNewMessages,
+    setText,
+    sphereWorking,
+    text,
+  ]);
+
+  const handleKeyEvent = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Enter" && focused) handlePlaneButtonClick();
+    },
+    [focused, handlePlaneButtonClick],
+  );
 
   const activeMicStyles = useMemo(
     () =>
@@ -136,6 +157,14 @@ const InputBlock: FC<Props> = ({
       }),
     [sphereWorking, sendTextLoading],
   );
+
+  useEffect(() => {
+    getLocalStreamHelper();
+    if (typeof window !== "undefined")
+      window.addEventListener("keydown", handleKeyEvent);
+
+    return () => window.removeEventListener("keydown", handleKeyEvent);
+  }, [handleKeyEvent]);
 
   return (
     <BottomMessageWrapper>
@@ -162,7 +191,7 @@ const InputBlock: FC<Props> = ({
           className={activeMicStyles}
           onPointerDown={handleStartRecording}
           onPointerUp={handleStopRecording}
-          onMouseLeave={handleStopRecording}
+          onMouseLeave={handleDropRecording}
           onDrag={(e) => e.preventDefault()}
         >
           <MicrophoneIcon className={isDisabled} />

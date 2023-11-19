@@ -18,7 +18,7 @@ import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
 import Canvas from "@/components/chat/Canvas";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
-import { onSpeechEnd } from "@/components/chat/speech-manager";
+import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 
 type Props = {
   messages: TChatMessage[];
@@ -27,10 +27,11 @@ type Props = {
   makeInterferenceFromText: (arg: TTextData) => void;
   sphereWorking: boolean;
   setSphereWorking: Dispatch<SetStateAction<boolean>>;
-  handleSpeechEnd: () => void;
+  // handleSpeechEnd: () => void;
   sendTextLoading: boolean;
   setNewMessages: Dispatch<SetStateAction<TChatMessage[]>>;
-  handleNewMessage: (text: string) => void;
+  // handleNewMessage: THandleNewMessage;
+  handleEndRecord: THandleEndRecord;
 };
 
 const ChatBlock: FC<Props> = ({
@@ -40,13 +41,13 @@ const ChatBlock: FC<Props> = ({
   isLoading,
   setSphereWorking,
   sphereWorking,
-  handleSpeechEnd,
   sendTextLoading,
   setNewMessages,
-  handleNewMessage,
+  handleEndRecord,
 }) => {
   const [text, setText] = useState<string>("");
   const [chatContainerHeight, setChatContainerHeight] = useState<string>("");
+  const [mic, setMic] = useState<"stop" | "start" | "dropped">();
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +55,13 @@ const ChatBlock: FC<Props> = ({
     useStartNewDialogueMutation();
 
   const recorderControls = useAudioRecorder();
+
+  useEffect(() => {
+    if (!recorderControls.recordingTime && recorderControls.recordingBlob) {
+      if (mic === "stop") handleEndRecord(recorderControls.recordingBlob);
+      if (mic === "dropped") handleEndRecord(undefined);
+    }
+  }, [recorderControls.recordingBlob]);
 
   const changeScrollContainerHeight = useCallback(() => {
     if (!chatContainerRef.current) {
@@ -128,6 +136,7 @@ const ChatBlock: FC<Props> = ({
             setSphereWorking={setSphereWorking}
             startRecord={recorderControls.startRecording}
             stopRecord={recorderControls.stopRecording}
+            setMic={setMic}
           />
           <RecorderWrapper>
             <AudioRecorder
@@ -139,10 +148,11 @@ const ChatBlock: FC<Props> = ({
                 audioBitsPerSecond: 128000,
               }}
               recorderControls={recorderControls}
-              onRecordingComplete={onSpeechEnd(
-                handleSpeechEnd,
-                handleNewMessage,
-              )}
+              // onRecordingComplete={onSpeechEnd(
+              //   handleSpeechEnd,
+              //   handleNewMessage,
+              //   audioBlob,
+              // )}
               onNotAllowedOrFound={() => console.error("NOT ALLOWED RECORDING")}
             />
           </RecorderWrapper>

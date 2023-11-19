@@ -36,11 +36,11 @@ export const useGetFormiks = () => {
           toast.success(successMessage);
           localStorage.setItem(
             LOCAL_STORAGE_ITEM.ACCESS_TOKEN,
-            data[LOCAL_STORAGE_ITEM.ACCESS_TOKEN],
+            data.data[LOCAL_STORAGE_ITEM.ACCESS_TOKEN],
           );
           localStorage.setItem(
             LOCAL_STORAGE_ITEM.REFRESH_TOKEN,
-            data[LOCAL_STORAGE_ITEM.REFRESH_TOKEN],
+            data.data[LOCAL_STORAGE_ITEM.REFRESH_TOKEN],
           );
           router.push(ROUTES.CHAT);
         } else {
