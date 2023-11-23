@@ -50,6 +50,14 @@ const InputBlock: FC<Props> = ({
   );
   const [timer, setTimer] = useState<string>("600");
   const [focused, setFocus] = useState<boolean>(false);
+  const [isSecretActivated, setIsSecretActivated] = useState(false);
+  const [secretActivatedOnce, setSecretActivatedOnce] = useState(false);
+
+  const handleSecretActivationClick = () => {
+    handleSecretWordClick();
+    setIsSecretActivated(true);
+    setSecretActivatedOnce(true);
+  };
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -98,6 +106,7 @@ const InputBlock: FC<Props> = ({
   };
 
   const handleStartRecording = async () => {
+    if (!isSecretActivated) return;
     await getLocalStreamHelper();
     if (sphereWorking) return;
     setTimer("600");
@@ -134,6 +143,16 @@ const InputBlock: FC<Props> = ({
     sphereWorking,
     text,
   ]);
+
+  const handleSecretWordClick = useCallback(() => {
+    try {
+      makeInterferenceFromText({ text: "34test8129" });
+    } catch (e) {
+      console.error(e);
+      toast.error("Что-то пошло не так. Пожалуйста, попробуйте снова позже.");
+    }
+  }, [makeInterferenceFromText]);
+  
 
   const handleKeyEvent = useCallback(
     (e: KeyboardEvent) => {
@@ -186,6 +205,14 @@ const InputBlock: FC<Props> = ({
       </TextAreaWrapper>
       <IconsContainer onDrag={(e) => e.preventDefault()}>
         <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
+        {!secretActivatedOnce && (
+          <div style={{ position: 'relative', width: '100%', height: '50px' }}>
+            <div
+              style={{ width: '100%', height: '50px', position: 'absolute', zIndex: 1 }}
+              onClick={handleSecretActivationClick}
+            ></div>
+          </div>
+        )}
         <MicrophoneWrapper
           draggable="false"
           className={activeMicStyles}
@@ -198,8 +225,12 @@ const InputBlock: FC<Props> = ({
         </MicrophoneWrapper>
       </IconsContainer>
     </BottomMessageWrapper>
-  );
+  );  
+  
 };
+
+
+
 
 const pointAnimation = keyframes`
   0% {
