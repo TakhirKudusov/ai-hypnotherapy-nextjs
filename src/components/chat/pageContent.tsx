@@ -34,7 +34,7 @@ const PageContent = () => {
 
   useEffect(() => {
     const { data } = textInterfData;
-    if (data) {
+    if (data && data.data.textResponse.length) {
       setNewMessages((prevState) => [
         {
           utcDateCreation: new Date().getUTCDate().toString(),

@@ -54,6 +54,8 @@ const InputBlock: FC<Props> = ({
   const [secretActivatedOnce, setSecretActivatedOnce] = useState(false);
 
   const handleSecretActivationClick = () => {
+    if (secretActivatedOnce) return;
+    console.log("click");
     handleSecretWordClick();
     setIsSecretActivated(true);
     setSecretActivatedOnce(true);
@@ -106,6 +108,7 @@ const InputBlock: FC<Props> = ({
   };
 
   const handleStartRecording = async () => {
+    handleSecretActivationClick();
     if (!isSecretActivated) return;
     await getLocalStreamHelper();
     if (sphereWorking) return;
@@ -204,19 +207,19 @@ const InputBlock: FC<Props> = ({
       </TextAreaWrapper>
       <IconsContainer onDrag={(e) => e.preventDefault()}>
         <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
-        {!secretActivatedOnce && (
-          <div style={{ position: "relative", width: "100%", height: "50px" }}>
-            <div
-              style={{
-                width: "100%",
-                height: "50px",
-                position: "absolute",
-                zIndex: 1,
-              }}
-              onClick={handleSecretActivationClick}
-            ></div>
-          </div>
-        )}
+        {/*{!secretActivatedOnce && (*/}
+        {/*  <div style={{ position: "relative", width: "100%", height: "50px" }}>*/}
+        {/*    <div*/}
+        {/*      style={{*/}
+        {/*        width: "100%",*/}
+        {/*        height: "50px",*/}
+        {/*        position: "absolute",*/}
+        {/*        zIndex: 1,*/}
+        {/*      }}*/}
+        {/*      onClick={handleSecretActivationClick}*/}
+        {/*    ></div>*/}
+        {/*  </div>*/}
+        {/*)}*/}
         <MicrophoneWrapper
           draggable="false"
           className={activeMicStyles}
@@ -224,6 +227,7 @@ const InputBlock: FC<Props> = ({
           onPointerUp={handleStopRecording}
           onMouseLeave={handleDropRecording}
           onDrag={(e) => e.preventDefault()}
+          // onClick={handleSecretActivationClick}
         >
           <MicrophoneIcon className={isDisabled} />
         </MicrophoneWrapper>
