@@ -37,7 +37,7 @@ export default function Home() {
         data-request-access="write"
         onReady={handleTelegramWidgetReady}
       />
-      <Script src="/js/telegram-widget-handler.js" />
+      <Script src="/js/telegram-widget-handler.min.js" />
       <Main>
         <>
           <LeftBlock />
