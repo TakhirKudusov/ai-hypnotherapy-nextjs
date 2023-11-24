@@ -2,6 +2,7 @@ import { particleActions } from "./particle-manager";
 import { chatApi } from "@/redux/APIs/chatApi";
 import { store } from "@/redux/store";
 import { THandleNewMessage } from "@/utils/types/THandleNewMessage";
+import { Howl } from "howler";
 
 let source: { stop: (arg0: number) => void };
 let sourceIsStarted = false;
@@ -106,10 +107,19 @@ export const handleSuccess =
           handleSpeechEnd();
         };
 
-        const audio = new Audio(`/api/Chat/DownloadRecord/${uid}`);
-        audio.onended = endAction;
-        audio.onerror = endAction;
-        audio.play();
+        const sound = new Howl({
+          src: `/api/Chat/DownloadRecord/${uid}`,
+          onend: endAction,
+          autoplay: true,
+          format: "mp3",
+          onloaderror: endAction,
+          onplayerror: endAction,
+        });
+
+        // const audio = new Audio(`/api/Chat/DownloadRecord/${uid}`);
+        // audio.onended = endAction;
+        // audio.onerror = endAction;
+        sound.play();
 
         particleActions.onAiSpeaking();
       } else {

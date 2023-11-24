@@ -34,18 +34,20 @@ const PageContent = () => {
 
   useEffect(() => {
     const { data } = textInterfData;
-    if (data && data.data.textResponse.length) {
-      setNewMessages((prevState) => [
-        {
-          utcDateCreation: new Date().getUTCDate().toString(),
-          actor: 3,
-          text: data.data.textResponse,
-          isLoading: true,
-          key: v1(),
-        },
-        ...prevState,
-      ]);
-      setSphereWorking(true);
+    if (data) {
+      if (data.data.textResponse.length) {
+        setNewMessages((prevState) => [
+          {
+            utcDateCreation: new Date().getUTCDate().toString(),
+            actor: 3,
+            text: data.data.textResponse,
+            isLoading: true,
+            key: v1(),
+          },
+          ...prevState,
+        ]);
+        setSphereWorking(true);
+      }
       handleSuccess(handleSpeechEnd)(data.data.voiceResponse.recordUid);
     }
   }, [textInterfData.data]);
