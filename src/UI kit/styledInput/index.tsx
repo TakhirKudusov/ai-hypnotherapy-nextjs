@@ -48,7 +48,7 @@ const Input = styled.input`
   font-size: 16px;
   height: 50px;
   &:focus {
-    border-color: rgb(159, 165, 254);
+    border-color: #4768b5;
   }
   &.error {
     border-color: #ff3c3c;

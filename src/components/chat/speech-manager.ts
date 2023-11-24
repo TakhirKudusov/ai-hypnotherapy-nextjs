@@ -2,8 +2,6 @@ import { particleActions } from "./particle-manager";
 import { chatApi } from "@/redux/APIs/chatApi";
 import { store } from "@/redux/store";
 import { THandleNewMessage } from "@/utils/types/THandleNewMessage";
-import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
-import { Howl } from "howler";
 
 let source: { stop: (arg0: number) => void };
 let sourceIsStarted = false;
@@ -103,29 +101,15 @@ export const handleSuccess =
       if (typeof window !== "undefined") {
         stopSourceIfNeeded();
 
-        const accessToken = localStorage.getItem(
-          LOCAL_STORAGE_ITEM.ACCESS_TOKEN,
-        );
+        const endAction = () => {
+          particleActions.reset();
+          handleSpeechEnd();
+        };
 
-        const sound = new Howl({
-          src: `/api/Chat/DownloadRecord/${uid}?Authorization=${accessToken}`,
-          html5: true,
-          autoplay: true,
-          volume: 0.5,
-          format: "ogg",
-          onend: () => {
-            particleActions.reset();
-            handleSpeechEnd();
-          },
-          onplayerror: () => {
-            handleSpeechEnd();
-          },
-          onloaderror: () => {
-            handleSpeechEnd();
-          },
-        });
-
-        sound.play();
+        const audio = new Audio(`/api/Chat/DownloadRecord/${uid}`);
+        audio.onended = endAction;
+        audio.onerror = endAction;
+        audio.play();
 
         particleActions.onAiSpeaking();
       } else {

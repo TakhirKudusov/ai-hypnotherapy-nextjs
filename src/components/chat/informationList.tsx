@@ -12,38 +12,26 @@ const InformationList: FC<Props> = ({ className }) => {
       <InfoRow>
         <InfoIcon />
         <InfoText>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          <strong>Как начать пользоваться?</strong>
+          <br /> Четко определи задачу (проблему, которую хочешь решить; страх
+          от&nbsp;которого хочешь избавиться; цель, которую хочешь достигнуть).
+          Сформулируй её&nbsp;одним предложением. Удели 2-3 часа непрерывного
+          времени, чтобы полностью сосредоточиться на&nbsp;процессе работы
+          с&nbsp;GeniusMind Bot. Начни диалог с&nbsp;ботом. Твоё участие
+          в&nbsp;беседе приведет к&nbsp;состоянию сознания, в&nbsp;котором
+          ты&nbsp;сможешь переосмыслить и&nbsp;отредактировать свои обычные
+          реакции и&nbsp;действия.
         </InfoText>
       </InfoRow>
       <InfoRow>
         <InfoIcon />
         <InfoText>
-          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-          nisi ut aliquip ex ea commodo consequat.
-        </InfoText>
-      </InfoRow>
-      <InfoRow>
-        <InfoIcon />
-        <InfoText>
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur.
-        </InfoText>
-      </InfoRow>
-      <InfoRow>
-        <InfoIcon />
-        <InfoText>
-          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-          officia deserunt mollit anim id est laborum.
-        </InfoText>
-      </InfoRow>
-      <InfoRow>
-        <InfoIcon />
-        <InfoText>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo.
+          <strong>Важно помнить:</strong>
+          <br /> GeniusMind Bot представляет собой инструмент самопомощи
+          и&nbsp;не&nbsp;предназначен для замены профессионального
+          психологического лечения. Если у&nbsp;вас есть серьезные
+          психологические проблемы, рекомендуется обратиться за&nbsp;помощью
+          к&nbsp;квалифицированному специалисту.
         </InfoText>
       </InfoRow>
     </InfoContainer>
@@ -61,14 +49,13 @@ const InfoText = styled.p`
 `;
 
 const InfoIcon = styled(CircleInfo)`
-  color: #3d3b66;
+  color: #4768b5;
   min-width: 15px;
   height: 15px;
 `;
 
 const InfoRow = styled.div`
   display: flex;
-  align-items: center;
   background-color: #f5f5f5;
   padding: 10px;
   border-radius: 7px;

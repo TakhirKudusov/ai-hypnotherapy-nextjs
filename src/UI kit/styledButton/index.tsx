@@ -99,7 +99,7 @@ const Button = styled.button<{
       case BUTTON_STYLE.FILLED:
         return css`
           border: none;
-          background-color: #4e47df;
+          background-color: #4768b5;
           color: white;
           &:hover {
             opacity: 0.8;
@@ -110,8 +110,8 @@ const Button = styled.button<{
         `;
       case BUTTON_STYLE.OUTLINED:
         return css`
-          color: #4e47df;
-          border: #4e47df solid 1px;
+          color: #4768b5;
+          border: #4768b5 solid 1px;
           background-color: white;
 
           &:hover {

@@ -20,4 +20,5 @@ export const REGISTER_SCHEMA = Yup.object<TRegisterValues>().shape({
       passwordRegexp,
       "Пароль должен содержать символы верхнего и нижнего регистров и цифры",
     ),
+  gender: Yup.string().required("Пожалуйста, укажите ваш пол"),
 });

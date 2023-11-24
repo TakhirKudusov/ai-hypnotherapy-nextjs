@@ -7,7 +7,7 @@ import ReduxProvider from "@/redux/reduxProvider";
 import { montserrat } from "@/lib/fonts";
 
 export const metadata: Metadata = {
-  title: "AI Hypno App",
+  title: "GeniusMind Bot",
   description: "Ваш интеллектуальный помощник",
 };
 

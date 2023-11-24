@@ -18,7 +18,7 @@ const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
         {emitter === MESSAGE_EMITTER.BOT ? <BotIcon /> : <FaceIcon />}
       </AvatarWrapper>
       <TextWrapper>
-        <Title>{emitter === MESSAGE_EMITTER.BOT ? "HypnoAI" : "Вы"}</Title>
+        <Title>{emitter === MESSAGE_EMITTER.BOT ? "GeniusMind" : "Вы"}</Title>
         <TextContainer emitter={emitter}>
           {isLoading ? (
             <TypeAnimation

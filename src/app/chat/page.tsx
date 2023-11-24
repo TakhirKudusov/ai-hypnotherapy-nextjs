@@ -1,10 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const PageContent = dynamic(() => import("@/components/chat/pageContent"), {
-  ssr: false,
-});
+import PageContent from "@/components/chat/pageContent";
 
 const Page = () => {
   return <PageContent />;

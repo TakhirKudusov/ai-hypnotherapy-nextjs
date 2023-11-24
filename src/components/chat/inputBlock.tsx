@@ -152,7 +152,6 @@ const InputBlock: FC<Props> = ({
       toast.error("Что-то пошло не так. Пожалуйста, попробуйте снова позже.");
     }
   }, [makeInterferenceFromText]);
-  
 
   const handleKeyEvent = useCallback(
     (e: KeyboardEvent) => {
@@ -206,9 +205,14 @@ const InputBlock: FC<Props> = ({
       <IconsContainer onDrag={(e) => e.preventDefault()}>
         <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
         {!secretActivatedOnce && (
-          <div style={{ position: 'relative', width: '100%', height: '50px' }}>
+          <div style={{ position: "relative", width: "100%", height: "50px" }}>
             <div
-              style={{ width: '100%', height: '50px', position: 'absolute', zIndex: 1 }}
+              style={{
+                width: "100%",
+                height: "50px",
+                position: "absolute",
+                zIndex: 1,
+              }}
               onClick={handleSecretActivationClick}
             ></div>
           </div>
@@ -225,12 +229,8 @@ const InputBlock: FC<Props> = ({
         </MicrophoneWrapper>
       </IconsContainer>
     </BottomMessageWrapper>
-  );  
-  
+  );
 };
-
-
-
 
 const pointAnimation = keyframes`
   0% {
@@ -291,9 +291,10 @@ const MicrophoneWrapper = styled.div`
   -moz-user-select: none;
   -khtml-user-select: none;
   user-select: none;
+
   &.active {
     animation: ${pointAnimation} 1.5s linear infinite;
-    background-color: #2aabee;
+    background-color: #00a2ff;
     width: 45px;
     min-height: 45px;
     position: relative;

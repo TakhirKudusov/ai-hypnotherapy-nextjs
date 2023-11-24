@@ -10,16 +10,20 @@ const RightBlock = () => {
       <RightBlockContainer>
         <TitleContainer>
           <Title className={spaceGrotesk.className}>
-            AI Hypno<AppText className={spaceGrotesk.className}>app</AppText>
+            GeniusMind<AppText className={spaceGrotesk.className}>bot</AppText>
           </Title>
-          <SubTitle>Lorem ipsum dolor sit amet</SubTitle>
+          <SubTitle>
+            Психологический помощник на основе искусственного интеллекта!
+          </SubTitle>
         </TitleContainer>
         <WhiteBlock>
           <WhiteBlockTitleContainer>
             <WhiteBlockTopText>Представляем</WhiteBlockTopText>
             <WBTitleInnerContainer>
-              <WBTitle>HypnoGPT</WBTitle>
-              <WBSubTitle>Lorem ipsum dolor sit</WBSubTitle>
+              <WBTitle>GeniusMind</WBTitle>
+              <WBSubTitle>
+                Психологический помощник на основе искусственного интеллекта!
+              </WBSubTitle>
             </WBTitleInnerContainer>
           </WhiteBlockTitleContainer>
           <TextTypeWrapper>
@@ -134,10 +138,10 @@ const AppText = styled.span`
   font-size: 18px;
   font-weight: 600;
   position: relative;
-  bottom: 23px;
+  bottom: 30px;
   right: 7px;
   @media screen and (max-width: 768px) {
-    bottom: 20px;
+    bottom: 25px;
   }
 `;
 
@@ -168,7 +172,7 @@ const RightBlockContainer = styled.div`
 `;
 
 const RightBlockWrapper = styled(BlockWrapper)`
-  background: url("/svg/grid.svg") rgba(92, 85, 228) left no-repeat;
+  background: url("/svg/grid.svg") #4768b5 left no-repeat;
   background-size: 92%;
   padding: 30px 50px;
   align-items: flex-start;

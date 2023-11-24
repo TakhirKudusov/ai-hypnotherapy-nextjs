@@ -1,25 +1,40 @@
 import styled from "styled-components";
 import StyledButton from "@/UI kit/styledButton";
-import { BUTTON_SIZE } from "@/UI kit/styledButton/utils/enums/buttonSize.enum";
 import { memo } from "react";
 
 const LeftBottomBlock = () => {
   return (
     <Wrapper>
       <InfoContainer>
-        <Title>Lorem ipsum dolor sit amet, consectetur</Title>
+        <Title>Как это работает?</Title>
         <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi
+          GeniusMind Bot&nbsp;&mdash; это ваш персональный путеводитель
+          по&nbsp;внутреннему миру. Общение с&nbsp;ботом пробуждает осознанность
+          и&nbsp;позволяет вам по-новому взглянуть на&nbsp;свои мысли
+          и&nbsp;поступки. Он&nbsp;предлагает уникальные упражнения, которые
+          помогают распознать и&nbsp;перестроить глубинные психологические
+          установки, открывая путь к&nbsp;личностному росту
+          и&nbsp;самосовершенствованию.
         </Text>
-        <Button text="пополнить" buttonSize={BUTTON_SIZE.SMALL} />
+        <br />
+        <Title>Что вы получите?</Title>
+        <Text>
+          Средство для глубокой саморефлексии: Ведя диалог с&nbsp;ботом,
+          вы&nbsp;сможете осмыслить свои внутренние установки
+          и&nbsp;поведенческие модели, и&nbsp;откорректировать&nbsp;их.
+          Навигатор по&nbsp;личностным изменениям: Получите индивидуальные
+          рекомендации, которые помогут вам осознать и&nbsp;переосмыслить ваше
+          мышление и&nbsp;действия. Поддержка в&nbsp;самосовершенствовании:
+          Благодаря GeniusMind Bot вы&nbsp;получите инструменты для развития
+          новых реакций и&nbsp;подходов к&nbsp;жизненным ситуациям.
+        </Text>
+        {/*<Button text="пополнить" buttonSize={BUTTON_SIZE.SMALL} />*/}
       </InfoContainer>
-      <BannerBlock>
-        <BannerText>
-          Lorem ipsum dolor sit amet, consectetur adipiscing
-        </BannerText>
-      </BannerBlock>
+      {/*<BannerBlock>*/}
+      {/*  <BannerText>*/}
+      {/*    Lorem ipsum dolor sit amet, consectetur adipiscing*/}
+      {/*  </BannerText>*/}
+      {/*</BannerBlock>*/}
     </Wrapper>
   );
 };

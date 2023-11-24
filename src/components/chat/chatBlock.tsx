@@ -172,7 +172,7 @@ const NewDialogButton = styled.button`
   padding: 10px;
   position: absolute;
   z-index: 5;
-  background-color: rgb(48, 51, 73);
+  background-color: #293b6c;
   top: 0;
   color: white;
   border-radius: 0 0 10px 10px;
@@ -265,7 +265,7 @@ const ScrollContainer = styled.div`
 const Container = styled.div`
   width: 100%;
   transition: 300ms linear;
-  background-color: rgba(79, 84, 103);
+  background-color: #4768b5;
   border-radius: 10px;
   flex-grow: 1;
   display: flex;

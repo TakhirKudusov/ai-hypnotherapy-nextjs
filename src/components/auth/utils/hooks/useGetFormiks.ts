@@ -67,7 +67,8 @@ export const useGetFormiks = () => {
   const registerFormik = useFormik({
     initialValues: registerInitialValues,
     validationSchema: REGISTER_SCHEMA,
-    onSubmit: async (values: TRegisterValues) => {
+    onSubmit: async (values: TRegisterValues, formikHelpers) => {
+      formikHelpers.setTouched({ gender: true }).catch(console.error);
       await handleRequest(register, values, "Вы успешно зарегистрированы");
     },
   });

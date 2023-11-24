@@ -1,4 +1,4 @@
-import { FC, memo, SyntheticEvent, useMemo } from "react";
+import { FC, memo, SyntheticEvent, useMemo, useState } from "react";
 import { FormikProps } from "formik";
 import { TRegisterValues } from "@/components/auth/utils/types/TRegisterValues";
 import StyledForm from "@/components/auth/styledForm";
@@ -10,6 +10,8 @@ import { REGISTER_PLACEHOLDER } from "@/components/auth/utils/enums/registerPlac
 import FormInnerContainer from "@/components/auth/formInnerContainer";
 import StyledButton from "@/UI kit/styledButton";
 import { BUTTON_STYLE } from "@/UI kit/styledButton/utils/enums/ButtonStyle.enum";
+import styled from "styled-components";
+import { montserrat } from "@/lib/fonts";
 
 type Props = {
   formik: FormikProps<TRegisterValues>;
@@ -17,6 +19,9 @@ type Props = {
 };
 
 const RegisterForm: FC<Props> = ({ formik, loading }) => {
+  const [male, setMale] = useState(false);
+  const [female, setFemale] = useState(false);
+
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formik.values.password !== formik.values.confirmPassword) {
@@ -95,6 +100,50 @@ const RegisterForm: FC<Props> = ({ formik, loading }) => {
               className={confirmPasswordInputStyles}
             />
           </InputWrapper>
+          <InputWrapper
+            errorMessage={formik.errors.gender}
+            touched={formik.touched.gender}
+          >
+            <Title className={montserrat.className}>Выберите пол</Title>
+            <CheckBoxWrapper>
+              <CheckBoxContainer>
+                <input
+                  type="checkbox"
+                  checked={male}
+                  onClick={() => {
+                    if (female) setFemale(false);
+                    if (!male) {
+                      formik
+                        .setFieldValue("gender", "male")
+                        .catch(console.error);
+                    } else {
+                      formik.setFieldValue("gender", null).catch(console.error);
+                    }
+                    setMale((prevState) => !prevState);
+                  }}
+                />
+                <GenderTitle>Мужчина</GenderTitle>
+              </CheckBoxContainer>
+              <CheckBoxContainer>
+                <input
+                  type="checkbox"
+                  checked={female}
+                  onClick={() => {
+                    if (male) setMale(false);
+                    if (!female) {
+                      formik
+                        .setFieldValue("gender", "female")
+                        .catch(console.error);
+                    } else {
+                      formik.setFieldValue("gender", null).catch(console.error);
+                    }
+                    setFemale((prevState) => !prevState);
+                  }}
+                />
+                <GenderTitle>Женщина</GenderTitle>
+              </CheckBoxContainer>
+            </CheckBoxWrapper>
+          </InputWrapper>
         </FormInnerContainer>
         <StyledButton
           type="submit"
@@ -106,5 +155,25 @@ const RegisterForm: FC<Props> = ({ formik, loading }) => {
     </StyledForm>
   );
 };
+
+const GenderTitle = styled.p`
+  font-weight: 500;
+  font-size: 14px;
+`;
+
+const Title = styled.p`
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const CheckBoxContainer = styled.div`
+  display: flex;
+  column-gap: 10px;
+`;
+
+const CheckBoxWrapper = styled.div`
+  display: flex;
+  column-gap: 15px;
+`;
 
 export default memo(RegisterForm);

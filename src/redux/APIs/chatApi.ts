@@ -13,7 +13,7 @@ export const chatApi = backendApi.injectEndpoints({
       transformResponse: (data: TResponse<TChatMessage[]>) => {
         data.data.push({
           actor: 3,
-          text: "Приветственное сообщение от бота",
+          text: "С чем хочешь поработать?",
           utcDateCreation: "1970-01-01T00:00:00.8158556Z",
           key: v1(),
         });

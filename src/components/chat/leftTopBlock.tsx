@@ -6,9 +6,11 @@ const LeftTopBlock = () => {
     <TopBlockWrapper>
       <TitleContainer>
         <Title>
-          HypnoGPT<AppText>app</AppText>
+          GeniusMind<AppText>bot</AppText>
         </Title>
-        <SubTitle>Lorem ipsum dolor sit amet, consectetur</SubTitle>
+        <SubTitle>
+          Психологический помощник на основе искусственного интеллекта!
+        </SubTitle>
       </TitleContainer>
       <StyledInformationList />
     </TopBlockWrapper>
