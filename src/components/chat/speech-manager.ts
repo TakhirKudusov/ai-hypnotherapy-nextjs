@@ -83,7 +83,10 @@ const handleResponse =
       throw new Error("Request err. No data received.");
     }
 
-    return (textData as any).data.data.voiceResponse.recordUid;
+    return {
+      uid: (textData as any).data.data.voiceResponse.recordUid,
+      messageLength: (textData as any).data.data.textResponse.length,
+    };
   };
 
 const createBody = (data: Blob) => {
@@ -97,7 +100,8 @@ const createBody = (data: Blob) => {
 };
 
 export const handleSuccess =
-  (handleSpeechEnd: () => void) => async (uid: string) => {
+  (handleSpeechEnd: () => void) =>
+  async ({ uid, messageLength }: { uid: string; messageLength: number }) => {
     try {
       if (typeof window !== "undefined") {
         stopSourceIfNeeded();
@@ -106,20 +110,20 @@ export const handleSuccess =
           particleActions.reset();
           handleSpeechEnd();
         };
-
         const sound = new Howl({
           src: `/api/Chat/DownloadRecord/${uid}`,
-          onend: endAction,
           autoplay: true,
           format: "mp3",
-          onloaderror: endAction,
-          onplayerror: endAction,
+          onloaderror: messageLength ? endAction : () => {},
+          onplayerror: messageLength ? endAction : () => {},
+          onend: messageLength ? endAction : () => {},
         });
 
         // const audio = new Audio(`/api/Chat/DownloadRecord/${uid}`);
         // audio.onended = endAction;
         // audio.onerror = endAction;
-        sound.play();
+        // audio.play();
+        // sound.play();
 
         particleActions.onAiSpeaking();
       } else {

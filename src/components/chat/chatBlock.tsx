@@ -108,7 +108,7 @@ const ChatBlock: FC<Props> = ({
             maxHeight: chatContainerHeight,
           }}
         >
-          <ScrollContainer>
+          <ScrollContainer id="scroll-container">
             <NewDialogButton onClick={handleStartNewDDialogueClick}>
               Начать новый диалог
             </NewDialogButton>

@@ -50,12 +50,10 @@ const InputBlock: FC<Props> = ({
   );
   const [timer, setTimer] = useState<string>("600");
   const [focused, setFocus] = useState<boolean>(false);
-  const [isSecretActivated, setIsSecretActivated] = useState(false);
   const [secretActivatedOnce, setSecretActivatedOnce] = useState(false);
 
   const handleSecretActivationClick = () => {
     handleSecretWordClick();
-    setIsSecretActivated(true);
     setSecretActivatedOnce(true);
   };
 
@@ -106,8 +104,8 @@ const InputBlock: FC<Props> = ({
   };
 
   const handleStartRecording = async () => {
-    await getLocalStreamHelper();
     if (sphereWorking) return;
+    await getLocalStreamHelper();
     setTimer("600");
     setButtonState("active");
     setSphereWorking(true);
@@ -130,6 +128,10 @@ const InputBlock: FC<Props> = ({
         ...prevState,
       ]);
       setText("");
+      const scrollContainer = document.getElementById("scroll-container");
+      scrollContainer?.scrollTo({
+        top: 0,
+      });
     } catch (e) {
       console.error(e);
       toast.error("Что-то пошло не так. Пожалуйста, попробуйте снова позже.");

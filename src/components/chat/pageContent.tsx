@@ -47,8 +47,16 @@ const PageContent = () => {
           ...prevState,
         ]);
         setSphereWorking(true);
+        const scrollContainer = document.getElementById("scroll-container");
+        scrollContainer?.scrollTo({
+          top: 0,
+        });
       }
-      handleSuccess(handleSpeechEnd)(data.data.voiceResponse.recordUid);
+
+      handleSuccess(handleSpeechEnd)({
+        uid: data.data.voiceResponse.recordUid,
+        messageLength: data.data.textResponse.length,
+      });
     }
   }, [textInterfData.data]);
 
@@ -88,6 +96,10 @@ const PageContent = () => {
       },
       ...prevState,
     ]);
+    const scrollContainer = document.getElementById("scroll-container");
+    scrollContainer?.scrollTo({
+      top: 0,
+    });
   };
 
   const handleEndRecord: THandleEndRecord = async (blob) => {
