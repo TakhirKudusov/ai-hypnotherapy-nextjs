@@ -128,10 +128,13 @@ const InputBlock: FC<Props> = ({
         ...prevState,
       ]);
       setText("");
-      const scrollContainer = document.getElementById("scroll-container");
-      scrollContainer?.scrollTo({
-        top: 0,
-      });
+      setTimeout(() => {
+        const scrollContainer = document.getElementById("scroll-container");
+        scrollContainer?.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 500);
     } catch (e) {
       console.error(e);
       toast.error("Что-то пошло не так. Пожалуйста, попробуйте снова позже.");

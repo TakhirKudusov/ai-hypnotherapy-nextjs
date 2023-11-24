@@ -33,6 +33,7 @@ const PageContent = () => {
     useMakeInferenceFromTextMutation();
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
     const { data } = textInterfData;
     if (data) {
       if (data.data.textResponse.length) {
@@ -47,10 +48,13 @@ const PageContent = () => {
           ...prevState,
         ]);
         setSphereWorking(true);
-        const scrollContainer = document.getElementById("scroll-container");
-        scrollContainer?.scrollTo({
-          top: 0,
-        });
+        setTimeout(() => {
+          const scrollContainer = document.getElementById("scroll-container");
+          scrollContainer?.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }, 500);
       }
 
       handleSuccess(handleSpeechEnd)({
@@ -58,6 +62,8 @@ const PageContent = () => {
         messageLength: data.data.textResponse.length,
       });
     }
+
+    return () => clearTimeout(timeout);
   }, [textInterfData.data]);
 
   const messages = useMemo(
@@ -96,10 +102,13 @@ const PageContent = () => {
       },
       ...prevState,
     ]);
-    const scrollContainer = document.getElementById("scroll-container");
-    scrollContainer?.scrollTo({
-      top: 0,
-    });
+    setTimeout(() => {
+      const scrollContainer = document.getElementById("scroll-container");
+      scrollContainer?.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 500);
   };
 
   const handleEndRecord: THandleEndRecord = async (blob) => {
