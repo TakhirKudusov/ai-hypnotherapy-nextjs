@@ -113,9 +113,7 @@ const RegisterForm: FC<Props> = ({ formik, loading }) => {
                   onClick={() => {
                     if (female) setFemale(false);
                     if (!male) {
-                      formik
-                        .setFieldValue("gender", "male")
-                        .catch(console.error);
+                      formik.setFieldValue("gender", 1).catch(console.error);
                     } else {
                       formik.setFieldValue("gender", null).catch(console.error);
                     }
@@ -131,9 +129,7 @@ const RegisterForm: FC<Props> = ({ formik, loading }) => {
                   onClick={() => {
                     if (male) setMale(false);
                     if (!female) {
-                      formik
-                        .setFieldValue("gender", "female")
-                        .catch(console.error);
+                      formik.setFieldValue("gender", 0).catch(console.error);
                     } else {
                       formik.setFieldValue("gender", null).catch(console.error);
                     }

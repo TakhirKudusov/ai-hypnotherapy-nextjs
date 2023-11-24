@@ -54,8 +54,6 @@ const InputBlock: FC<Props> = ({
   const [secretActivatedOnce, setSecretActivatedOnce] = useState(false);
 
   const handleSecretActivationClick = () => {
-    if (secretActivatedOnce) return;
-    console.log("click");
     handleSecretWordClick();
     setIsSecretActivated(true);
     setSecretActivatedOnce(true);
@@ -108,8 +106,6 @@ const InputBlock: FC<Props> = ({
   };
 
   const handleStartRecording = async () => {
-    handleSecretActivationClick();
-    if (!isSecretActivated) return;
     await getLocalStreamHelper();
     if (sphereWorking) return;
     setTimer("600");
@@ -189,6 +185,11 @@ const InputBlock: FC<Props> = ({
 
   return (
     <BottomMessageWrapper>
+      {!secretActivatedOnce && (
+        <StartButtonContainer>
+          <StartButton onClick={handleSecretActivationClick}>start</StartButton>
+        </StartButtonContainer>
+      )}
       <TextAreaWrapper>
         {buttonState === "active" && (
           <MicPointContainer>
@@ -207,19 +208,6 @@ const InputBlock: FC<Props> = ({
       </TextAreaWrapper>
       <IconsContainer onDrag={(e) => e.preventDefault()}>
         <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
-        {/*{!secretActivatedOnce && (*/}
-        {/*  <div style={{ position: "relative", width: "100%", height: "50px" }}>*/}
-        {/*    <div*/}
-        {/*      style={{*/}
-        {/*        width: "100%",*/}
-        {/*        height: "50px",*/}
-        {/*        position: "absolute",*/}
-        {/*        zIndex: 1,*/}
-        {/*      }}*/}
-        {/*      onClick={handleSecretActivationClick}*/}
-        {/*    ></div>*/}
-        {/*  </div>*/}
-        {/*)}*/}
         <MicrophoneWrapper
           draggable="false"
           className={activeMicStyles}
@@ -235,6 +223,45 @@ const InputBlock: FC<Props> = ({
     </BottomMessageWrapper>
   );
 };
+
+const StartButton = styled.div`
+  height: 70px;
+  width: 100%;
+  background-color: #5976bc;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 5px;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: 150ms linear;
+  &:hover {
+    background-color: #708ace;
+  }
+
+  &:active {
+    background-color: #819bdc;
+  }
+
+  @media screen and (max-width: 1200px) {
+    height: 59px;
+    font-size: 16px;
+  }
+`;
+
+const StartButtonContainer = styled.div`
+  height: 0;
+  overflow: visible;
+  z-index: 10;
+  position: absolute;
+  width: calc(100% - 29px);
+`;
 
 const pointAnimation = keyframes`
   0% {
@@ -305,10 +332,10 @@ const MicrophoneWrapper = styled.div`
     bottom: 8px;
     right: 9px;
     @media screen and (max-width: 1200px) {
-      width: 40px;
-      min-height: 40px;
-      bottom: 7px;
-      right: 7px;
+      width: 33px;
+      min-height: 33px;
+      bottom: 5px;
+      right: 5px;
     }
   }
 `;
@@ -334,10 +361,10 @@ const MicrophoneIcon = styled(Microphone)`
   }
 
   @media screen and (max-width: 1200px) {
-    min-width: 27px;
-    min-height: 27px;
-    max-width: 27px;
-    max-height: 27px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
   }
 
   &.disabled {
@@ -364,8 +391,10 @@ const AirPlaneIcon = styled(PaperAirplane)`
     opacity: 0.6;
   }
   @media screen and (max-width: 1200px) {
-    width: 27px;
-    min-height: 27px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
   }
 
   &.disabled {
