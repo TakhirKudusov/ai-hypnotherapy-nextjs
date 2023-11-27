@@ -43,7 +43,7 @@ const PageContent = () => {
             actor: 3,
             text: data.data.textResponse,
             isLoading: true,
-            key: v1(),
+            key: v1() + new Date().getUTCDate().toString(),
           },
           ...prevState,
         ]);
@@ -67,7 +67,7 @@ const PageContent = () => {
   }, [textInterfData.data]);
 
   const messages = useMemo(
-    () => (data ? [...newMessages.reverse(), ...data.data] : newMessages),
+    () => (data ? [...newMessages, ...data.data] : newMessages),
     [data, newMessages],
   );
 
@@ -98,7 +98,7 @@ const PageContent = () => {
         actor,
         text,
         isLoading: true,
-        key: v1(),
+        key: v1() + new Date().getUTCDate().toString(),
       },
       ...prevState,
     ]);

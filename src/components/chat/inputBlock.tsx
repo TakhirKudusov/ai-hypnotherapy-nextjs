@@ -123,7 +123,7 @@ const InputBlock: FC<Props> = ({
           actor: 0,
           text,
           isLoading: true,
-          key: v1(),
+          key: v1() + new Date().getUTCDate().toString(),
         },
         ...prevState,
       ]);

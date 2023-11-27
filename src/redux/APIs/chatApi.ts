@@ -15,12 +15,12 @@ export const chatApi = backendApi.injectEndpoints({
           actor: 3,
           text: "С чем хочешь поработать?",
           utcDateCreation: "1970-01-01T00:00:00.8158556Z",
-          key: v1(),
+          key: v1() + new Date().getUTCDate().toString(),
         });
 
         data.data
           .map((el) => {
-            el.key = v1();
+            el.key = v1() + new Date().getUTCDate().toString();
             return el;
           })
           .sort((a, b) => b.utcDateCreation.localeCompare(a.utcDateCreation));
