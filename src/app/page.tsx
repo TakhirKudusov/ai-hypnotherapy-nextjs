@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   const handleTelegramWidgetReady = useCallback(() => {
-    const widget = document.getElementById("telegram-login-kkk_login_test_bot");
+    const widget = document.getElementById("telegram-login-HypnoAppAuthBot");
     const widgetRoot = document.getElementById("telegram-widget-root");
     if (!(widget && widgetRoot)) return;
     widgetRoot.appendChild(widget);
@@ -31,7 +31,7 @@ export default function Home() {
       <Script
         async
         src="https://telegram.org/js/telegram-widget.js?22"
-        data-telegram-login="kkk_login_test_bot"
+        data-telegram-login="HypnoAppAuthBot"
         data-size="medium"
         data-onauth="onTelegramAuth(user)"
         data-request-access="write"
