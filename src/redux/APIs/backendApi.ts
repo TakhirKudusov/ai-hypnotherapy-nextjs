@@ -32,7 +32,9 @@ const staggeredBaseQueryWithFailOut = retry(
         extraOptions,
       );
 
-      const refreshData = refreshResult.data as TTokenData | undefined;
+      const refreshData = (refreshResult.data as any).data as
+        | TTokenData
+        | undefined;
 
       if (refreshData) {
         localStorage.setItem(
