@@ -7,7 +7,8 @@ const baseQuery = fetchBaseQuery({
   credentials: "same-origin",
   prepareHeaders: (headers) => {
     const accessToken = localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN);
-    if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
+    if (accessToken && accessToken !== "undefined")
+      headers.set("Authorization", `Bearer ${accessToken}`);
     return headers;
   },
 });
@@ -36,7 +37,11 @@ const staggeredBaseQueryWithFailOut = retry(
         | TTokenData
         | undefined;
 
-      if (refreshData) {
+      if (
+        refreshData &&
+        refreshData[LOCAL_STORAGE_ITEM.ACCESS_TOKEN] &&
+        refreshData[LOCAL_STORAGE_ITEM.REFRESH_TOKEN]
+      ) {
         localStorage.setItem(
           LOCAL_STORAGE_ITEM.ACCESS_TOKEN,
           refreshData[LOCAL_STORAGE_ITEM.ACCESS_TOKEN],

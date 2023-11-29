@@ -32,7 +32,12 @@ export const useGetFormiks = () => {
       try {
         const { data, isSuccess, error } = await callback(values);
 
-        if (data && isSuccess) {
+        if (
+          data &&
+          isSuccess &&
+          data.data[LOCAL_STORAGE_ITEM.REFRESH_TOKEN] &&
+          data.data[LOCAL_STORAGE_ITEM.ACCESS_TOKEN]
+        ) {
           toast.success(successMessage);
           localStorage.setItem(
             LOCAL_STORAGE_ITEM.ACCESS_TOKEN,
