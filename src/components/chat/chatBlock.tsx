@@ -17,7 +17,6 @@ import ChatMessagesList from "@/components/chat/chatMessagesList";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
 import Canvas from "@/components/chat/Canvas";
-import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 
 type Props = {
@@ -53,15 +52,6 @@ const ChatBlock: FC<Props> = ({
 
   const [startNewDialogue, startnNewDialogueData] =
     useStartNewDialogueMutation();
-
-  const recorderControls = useAudioRecorder();
-
-  useEffect(() => {
-    if (!recorderControls.recordingTime && recorderControls.recordingBlob) {
-      if (mic === "stop") handleEndRecord(recorderControls.recordingBlob);
-      if (mic === "dropped") handleEndRecord(undefined);
-    }
-  }, [recorderControls.recordingBlob]);
 
   const changeScrollContainerHeight = useCallback(() => {
     if (!chatContainerRef.current) {
@@ -134,39 +124,14 @@ const ChatBlock: FC<Props> = ({
             text={text}
             setText={setText}
             setSphereWorking={setSphereWorking}
-            startRecord={recorderControls.startRecording}
-            stopRecord={recorderControls.stopRecording}
+            handleEndRecord={handleEndRecord}
             setMic={setMic}
           />
-          <RecorderWrapper>
-            <AudioRecorder
-              audioTrackConstraints={{
-                echoCancellation: true,
-                noiseSuppression: true,
-              }}
-              mediaRecorderOptions={{
-                audioBitsPerSecond: 128000,
-              }}
-              recorderControls={recorderControls}
-              // onRecordingComplete={onSpeechEnd(
-              //   handleSpeechEnd,
-              //   handleNewMessage,
-              //   audioBlob,
-              // )}
-              onNotAllowedOrFound={() => console.error("NOT ALLOWED RECORDING")}
-            />
-          </RecorderWrapper>
         </Container>
       </ChatContainer>
     </Wrapper>
   );
 };
-
-const RecorderWrapper = styled.div`
-  width: 0;
-  height: 0;
-  overflow: hidden;
-`;
 
 const NewDialogButton = styled.button`
   padding: 10px;

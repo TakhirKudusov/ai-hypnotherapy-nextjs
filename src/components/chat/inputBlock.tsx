@@ -19,14 +19,17 @@ import numeral from "numeral";
 import { v1 } from "uuid";
 import { onSpeechStart } from "@/components/chat/speech-manager";
 import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
+import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
+import VadModule from "./vadModule";
 
 type Props = {
   text: string;
   setText: Dispatch<SetStateAction<string>>;
   setSphereWorking: Dispatch<SetStateAction<boolean>>;
   makeInterferenceFromText: (arg: TTextData) => void;
-  startRecord: () => void;
-  stopRecord: () => void;
+  handleEndRecord: THandleEndRecord;
+  // startRecord: () => void;
+  // stopRecord: () => void;
   sphereWorking: boolean;
   sendTextLoading: boolean;
   setNewMessages: Dispatch<SetStateAction<TChatMessage[]>>;
@@ -38,8 +41,9 @@ const InputBlock: FC<Props> = ({
   setText,
   text,
   setSphereWorking,
-  startRecord,
-  stopRecord,
+  handleEndRecord,
+  // startRecord,
+  // stopRecord,
   sphereWorking,
   sendTextLoading,
   setNewMessages,
@@ -70,7 +74,7 @@ const InputBlock: FC<Props> = ({
       timeout = setTimeout(() => {
         setButtonState("inactive");
         queueMicrotask(() => {
-          stopRecord();
+          // stopRecord();
         });
       }, 60_000);
     }
@@ -78,14 +82,14 @@ const InputBlock: FC<Props> = ({
       clearTimeout(timeout);
       clearTimeout(interval);
     };
-  }, [buttonState, stopRecord]);
+  }, [buttonState]);
 
   useEffect(() => {
     if (buttonState === "inactive")
       queueMicrotask(() => {
-        stopRecord();
+        // stopRecord();
       });
-  }, [buttonState, stopRecord]);
+  }, [buttonState]);
 
   const handleStopRecording = () => {
     if (buttonState === "inactive" && sphereWorking) return;
@@ -109,7 +113,7 @@ const InputBlock: FC<Props> = ({
     setTimer("600");
     setButtonState("active");
     setSphereWorking(true);
-    startRecord();
+    // startRecord();
     onSpeechStart();
   };
 
@@ -195,36 +199,65 @@ const InputBlock: FC<Props> = ({
           <StartButton onClick={handleSecretActivationClick}>start</StartButton>
         </StartButtonContainer>
       )}
-      <TextAreaWrapper>
-        {buttonState === "active" && (
-          <MicPointContainer>
-            <MicPoint />
-          </MicPointContainer>
+      {secretActivatedOnce && <>
+        {!(buttonState === "inactive" && sphereWorking) && (
+          <VadModule
+            handleEndRecord={handleEndRecord}
+            handleStopRecording={handleStopRecording}
+            handleStartRecording={handleStartRecording}
+          ></VadModule>
         )}
-        <TextArea
-          className={activeMicStyles}
-          value={buttonState === "inactive" ? text : "00:" + timer}
-          name="text"
-          onChange={(e) => setText(e.currentTarget.value)}
-          placeholder="Задайте свой вопрос..."
-          onBlur={() => setFocus(false)}
-          onFocus={() => setFocus(true)}
-        />
-      </TextAreaWrapper>
-      <IconsContainer onDrag={(e) => e.preventDefault()}>
-        <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
-        <MicrophoneWrapper
-          draggable="false"
-          className={activeMicStyles}
-          onPointerDown={handleStartRecording}
-          onPointerUp={handleStopRecording}
-          onMouseLeave={handleDropRecording}
-          onDrag={(e) => e.preventDefault()}
-          // onClick={handleSecretActivationClick}
-        >
-          <MicrophoneIcon className={isDisabled} />
-        </MicrophoneWrapper>
-      </IconsContainer>
+        
+        {buttonState === "active" ? (
+          <MicrophoneAreaWrapper>
+            <IconsContainer>
+              <MicrophoneWrapper
+                className={activeMicStyles}
+              >
+                <MicrophoneIcon className={isDisabled} />
+              </MicrophoneWrapper>
+            </IconsContainer>
+            <MicPointContainer>
+              <MicPoint />
+            </MicPointContainer>
+            <MicrophoneText>
+              {"00:" + timer}
+            </MicrophoneText>
+          </MicrophoneAreaWrapper>
+        ) : (
+          <MicrophoneAreaWrapper>
+            {!sphereWorking && <MicrophoneText>{"Скажи что-нибудь"}</MicrophoneText>}
+          </MicrophoneAreaWrapper>
+        )}
+        {/* ----------------------------------------
+        uncomment section below to enable text input
+        --------------------------------------------- */}
+        {/* <TextAreaWrapper>
+          <TextArea
+            className={activeMicStyles}
+            value={buttonState === "inactive" ? text : "00:" + timer}
+            name="text"
+            onChange={(e) => setText(e.currentTarget.value)}
+            placeholder="Задайте свой вопрос..."
+            onBlur={() => setFocus(false)}
+            onFocus={() => setFocus(true)}
+          />
+        </TextAreaWrapper>
+        <IconsContainer onDrag={(e) => e.preventDefault()}>
+          <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
+          <MicrophoneWrapper
+            draggable="false"
+            className={activeMicStyles}
+            onPointerDown={handleStartRecording}
+            onPointerUp={handleStopRecording}
+            onMouseLeave={handleDropRecording}
+            onDrag={(e) => e.preventDefault()}
+            // onClick={handleSecretActivationClick}
+          >
+            <MicrophoneIcon className={isDisabled} />
+          </MicrophoneWrapper>
+        </IconsContainer> */}
+      </>}
     </BottomMessageWrapper>
   );
 };
@@ -261,7 +294,13 @@ const StartButton = styled.div`
 `;
 
 const StartButtonContainer = styled.div`
-  height: 0;
+  min-height: 70px;
+  max-height: 70px;
+  @media screen and (max-width: 1200px) {
+    min-height: 59px;
+    max-height: 59px;
+  }
+  display: contents;
   overflow: visible;
   z-index: 10;
   position: absolute;
@@ -288,9 +327,29 @@ const MicPoint = styled.div`
   animation: ${pointAnimation} 1s linear infinite;
 `;
 
+const MicrophoneAreaWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  min-height: 70px;
+  max-height: 70px;
+  align-items: center;
+  padding: 10px;
+  @media screen and (max-width: 1200px) {
+    min-height: 59px;
+    max-height: 59px;
+  }
+`;
+
 const TextAreaWrapper = styled.div`
   width: 100%;
   display: flex;
+`;
+
+const MicrophoneText = styled.div`
+  width: 100%;
+  align-self: center;
+  padding: 15px;
+  color: white;
 `;
 
 const MicPointContainer = styled.div`
@@ -301,10 +360,9 @@ const MicPointContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  top: 35px;
-  left: 35px;
+  top: -15px;
   @media screen and (max-width: 1200px) {
-    top: 30px;
+    top: -12px;
   }
 `;
 
@@ -334,12 +392,12 @@ const MicrophoneWrapper = styled.div`
     width: 45px;
     min-height: 45px;
     position: relative;
-    bottom: 8px;
+    // bottom: 8px;
     right: 9px;
     @media screen and (max-width: 1200px) {
       width: 33px;
       min-height: 33px;
-      bottom: 5px;
+      // bottom: 5px;
       right: 5px;
     }
   }
