@@ -7,6 +7,9 @@ const nextConfig = {
     // Enables the styled-components SWC transform
     styledComponents: true,
   },
+  experimental: {
+    urlImports: ['https://unpkg.com/libav.js@4.8.6/dist/'],
+  },
   webpack: (config) => {
     // append the CopyPlugin to copy the file to your static dir
     // necessary for correct work of vad module!!!

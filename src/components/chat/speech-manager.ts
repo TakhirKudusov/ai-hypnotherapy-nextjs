@@ -147,7 +147,7 @@ const validate = async (data: Blob) => {
   );
 
   const duration = decodedData.duration;
-  const minDuration = 0.4;
+  const minDuration = 1.2;
 
   if (duration < minDuration || data.size === 0)
     throw new Error(

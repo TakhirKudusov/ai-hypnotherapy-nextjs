@@ -1,0 +1,4 @@
+{
+  "https://unpkg.com/libav.js@4.8.6/dist/libav-4.8.6.0.1-default.js": { "integrity": "sha512-ic3C1h3/+ukiCUG4th379QWFqYga0eG66ufFE9jwEf42hwYi7YZYceZJyJAcbk/B0PWzC9rjQ8sHi+PA6V4tcg==", "contentType": "application/javascript; charset=utf-8" },
+  "version": 1
+}

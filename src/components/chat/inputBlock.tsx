@@ -17,10 +17,32 @@ import clsx from "clsx";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import numeral from "numeral";
 import { v1 } from "uuid";
+import { folder, Leva, useControls } from 'leva'
 import { onSpeechStart } from "@/components/chat/speech-manager";
 import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 import VadModule from "./vadModule";
+import { useSearchParams } from "next/navigation";
+
+const customTheme = {
+  fontSizes: {
+    root: '12px'
+  },
+  sizes: {
+    rootWidth: '380px',
+    controlWidth: '160px',
+  },
+  space: {
+    rowGap: '12px',
+  },
+  colors: {
+    elevation1: '#5976bc',
+    elevation2: '#4768b5',
+    elevation3: '#7d98ff',
+    highlight1: '#ffffff',
+    highlight2: '#ffffff'
+  }
+}
 
 type Props = {
   text: string;
@@ -55,11 +77,49 @@ const InputBlock: FC<Props> = ({
   const [timer, setTimer] = useState<string>("600");
   const [focused, setFocus] = useState<boolean>(false);
   const [secretActivatedOnce, setSecretActivatedOnce] = useState(false);
+  const searchParams = useSearchParams()
+  const isDebug = searchParams.get('debug') === 'true'
 
   const handleSecretActivationClick = () => {
     handleSecretWordClick();
     setSecretActivatedOnce(true);
   };
+
+  const vadOptions = useControls(
+    {
+        positiveSpeechThreshold: {
+          value: 0.15,
+          min: 0,
+          max: 1,
+          step: 0.01,
+        },
+        negativeSpeechThreshold: {
+          value: 1,
+          min: 0,
+          max: 1,
+          step: 0.01,
+        },
+        minSpeechFrames: {
+          value: 3,
+          min: 0,
+          max: 1000,
+          step: 1,
+        },
+        preSpeechPadFrames: {
+          value: 1,
+          min: 0,
+          max: 1000,
+          step: 1,
+        },
+        redemptionFrames: {
+          value: 8,
+          min: 0,
+          max: 1000,
+          step: 1,
+        },
+    }
+  )
+  console.log('vadOptions: ', vadOptions);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -194,6 +254,10 @@ const InputBlock: FC<Props> = ({
 
   return (
     <BottomMessageWrapper>
+      <Leva
+        theme={customTheme}
+        hidden={!isDebug}
+      />
       {!secretActivatedOnce && (
         <StartButtonContainer>
           <StartButton onClick={handleSecretActivationClick}>start</StartButton>
@@ -202,12 +266,13 @@ const InputBlock: FC<Props> = ({
       {secretActivatedOnce && <>
         {!(buttonState === "inactive" && sphereWorking) && (
           <VadModule
+            options={vadOptions}
             handleEndRecord={handleEndRecord}
             handleStopRecording={handleStopRecording}
             handleStartRecording={handleStartRecording}
           ></VadModule>
         )}
-        
+
         {buttonState === "active" ? (
           <MicrophoneAreaWrapper>
             <IconsContainer>
@@ -229,34 +294,34 @@ const InputBlock: FC<Props> = ({
             {!sphereWorking && <MicrophoneText>{"Скажи что-нибудь"}</MicrophoneText>}
           </MicrophoneAreaWrapper>
         )}
-        {/* ----------------------------------------
-        uncomment section below to enable text input
-        --------------------------------------------- */}
-        {/* <TextAreaWrapper>
-          <TextArea
-            className={activeMicStyles}
-            value={buttonState === "inactive" ? text : "00:" + timer}
-            name="text"
-            onChange={(e) => setText(e.currentTarget.value)}
-            placeholder="Задайте свой вопрос..."
-            onBlur={() => setFocus(false)}
-            onFocus={() => setFocus(true)}
-          />
-        </TextAreaWrapper>
-        <IconsContainer onDrag={(e) => e.preventDefault()}>
-          <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
-          <MicrophoneWrapper
-            draggable="false"
-            className={activeMicStyles}
-            onPointerDown={handleStartRecording}
-            onPointerUp={handleStopRecording}
-            onMouseLeave={handleDropRecording}
-            onDrag={(e) => e.preventDefault()}
-            // onClick={handleSecretActivationClick}
-          >
-            <MicrophoneIcon className={isDisabled} />
-          </MicrophoneWrapper>
-        </IconsContainer> */}
+        {isDebug &&
+          <>
+            <TextAreaWrapper>
+              <TextArea
+                className={activeMicStyles}
+                value={buttonState === "inactive" ? text : "00:" + timer}
+                name="text"
+                onChange={(e) => setText(e.currentTarget.value)}
+                placeholder="Задайте свой вопрос..."
+                onBlur={() => setFocus(false)}
+                onFocus={() => setFocus(true)}
+              />
+            </TextAreaWrapper>
+            <IconsContainer onDrag={(e) => e.preventDefault()}>
+              <AirPlaneIcon onClick={handlePlaneButtonClick} className={isDisabled} />
+              <MicrophoneWrapper
+                draggable="false"
+                className={activeMicStyles}
+                onPointerDown={handleStartRecording}
+                onPointerUp={handleStopRecording}
+                onMouseLeave={handleDropRecording}
+                onDrag={(e) => e.preventDefault()}
+              // onClick={handleSecretActivationClick}
+              >
+                <MicrophoneIcon className={isDisabled} />
+              </MicrophoneWrapper>
+            </IconsContainer>
+          </>}
       </>}
     </BottomMessageWrapper>
   );
