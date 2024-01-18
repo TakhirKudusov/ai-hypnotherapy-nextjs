@@ -197,6 +197,7 @@ const MessageBox: FC<Props> = ({
 
     return () => window.removeEventListener("keydown", handleKeyEvent);
   }, [handleKeyEvent]);
+
   const vad = useMicVAD({
     ...vadOptions,
     onVADMisfire: () => {
