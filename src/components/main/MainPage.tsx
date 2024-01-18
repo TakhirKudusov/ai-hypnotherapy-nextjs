@@ -2,10 +2,10 @@
 
 import StyledMain from "@/UI kit/styledMain";
 import styled from "styled-components";
-import InformationBlock from "@/components/chat/informationBlock";
-import ChatBlock from "@/components/chat/chatBlock";
-import InformationList from "@/components/chat/informationList";
-import LeftBottomBlock from "@/components/chat/leftBottomBlock";
+import InformationBlock from "@/components/main/informationBlock";
+import ChatBlock from "@/components/main/chat/ChatPanel";
+import InformationList from "@/components/main/informationList";
+import LeftBottomBlock from "@/components/main/leftBottomBlock";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
 import { useRouter } from "next/navigation";
@@ -15,13 +15,16 @@ import {
   useGetChatQuery,
   useMakeInferenceFromTextMutation,
 } from "@/redux/APIs/chatApi";
-import { handleSuccess, onSpeechEnd } from "@/components/chat/speech-manager";
+import {
+  handleSuccess,
+  onSpeechEnd,
+} from "@/components/main/chat/speech-manager";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { v1 } from "uuid";
 import { THandleNewMessage } from "@/utils/types/THandleNewMessage";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 
-const PageContent = () => {
+const MainPage = () => {
   const [sphereWorking, setSphereWorking] = useState<boolean>(false);
   const [newMessages, setNewMessages] = useState<TChatMessage[]>([]);
 
@@ -182,4 +185,4 @@ const Main = styled(StyledMain)`
   }
 `;
 
-export default PageContent;
+export default MainPage;

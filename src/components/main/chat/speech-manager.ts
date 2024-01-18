@@ -1,4 +1,4 @@
-import { particleActions } from "./particle-manager";
+import { particleActions } from "../particle-manager";
 import { chatApi } from "@/redux/APIs/chatApi";
 import { store } from "@/redux/store";
 import { THandleNewMessage } from "@/utils/types/THandleNewMessage";

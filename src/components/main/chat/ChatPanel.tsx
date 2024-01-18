@@ -9,14 +9,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { particleActions } from "@/components/chat/particle-manager";
+import { particleActions } from "@/components/main/particle-manager";
 import { SpinnerIos } from "@styled-icons/fluentui-system-filled";
-import InputBlock from "@/components/chat/inputBlock";
+import MessageBox from "@/components/main/chat/MessageBox";
 import { useStartNewDialogueMutation } from "@/redux/APIs/chatApi";
-import ChatMessagesList from "@/components/chat/chatMessagesList";
+import ChatMessagesList from "@/components/main/chat/MessagesList";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
-import Canvas from "@/components/chat/Canvas";
+import Canvas from "@/components/main/Canvas";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 
 type Props = {
@@ -33,7 +33,7 @@ type Props = {
   handleEndRecord: THandleEndRecord;
 };
 
-const ChatBlock: FC<Props> = ({
+const ChatPanel: FC<Props> = ({
   makeInterferenceFromText,
   messages,
   isError,
@@ -116,7 +116,7 @@ const ChatBlock: FC<Props> = ({
               <ChatMessagesList messages={messages} />
             )}
           </ScrollContainer>
-          <InputBlock
+          <MessageBox
             setNewMessages={setNewMessages}
             sendTextLoading={sendTextLoading}
             sphereWorking={sphereWorking}
@@ -274,4 +274,4 @@ const Wrapper = styled.section`
   }
 `;
 
-export default memo(ChatBlock);
+export default memo(ChatPanel);

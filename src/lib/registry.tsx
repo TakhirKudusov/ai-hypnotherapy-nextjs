@@ -20,7 +20,9 @@ export default function StyledComponentsRegistry({
   });
 
   useEffect(() => {
+    // @ts-ignore
     if (screen?.orientation?.lock)
+      // @ts-ignore
       screen.orientation.lock("portrait").catch(console.error);
   }, []);
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import LeftTopBlock from "@/components/chat/leftTopBlock";
-import LeftBottomBlock from "@/components/chat/leftBottomBlock";
+import LeftTopBlock from "@/components/main/leftTopBlock";
+import LeftBottomBlock from "@/components/main/leftBottomBlock";
 import { memo } from "react";
 
 const InformationBlock = () => {

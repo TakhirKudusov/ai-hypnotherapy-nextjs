@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import InformationList from "@/components/chat/informationList";
+import InformationList from "@/components/main/informationList";
 
 const LeftTopBlock = () => {
   return (

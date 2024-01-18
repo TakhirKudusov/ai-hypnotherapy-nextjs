@@ -1,9 +1,9 @@
 "use client";
 
-import PageContent from "@/components/chat/pageContent";
+import MainPage from "@/components/main/MainPage";
 
 const Page = () => {
-  return <PageContent />;
+  return <MainPage />;
 };
 
 export default Page;

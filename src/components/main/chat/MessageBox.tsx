@@ -17,11 +17,18 @@ import clsx from "clsx";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import numeral from "numeral";
 import { v1 } from "uuid";
-import { onSpeechStart } from "@/components/chat/speech-manager";
+import { onSpeechStart } from "@/components/main/chat/speech-manager";
 import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
 import VadModule from "./vadModule";
-
+import { useMicVAD, utils } from "@ricky0123/vad-react";
+import * as ort from "onnxruntime-web";
+ort.env.wasm.wasmPaths = "/_next/static/";
+const vadOptions = {
+  modelURL: "/_next/static/silero_vad.onnx",
+  workletURL: "/_next/static/vad.worklet.bundle.min.js",
+  startOnLoad: false,
+};
 type Props = {
   text: string;
   setText: Dispatch<SetStateAction<string>>;
@@ -36,7 +43,7 @@ type Props = {
   setMic: Dispatch<SetStateAction<"stop" | "start" | "dropped" | undefined>>;
 };
 
-const InputBlock: FC<Props> = ({
+const MessageBox: FC<Props> = ({
   makeInterferenceFromText,
   setText,
   text,
@@ -94,9 +101,8 @@ const InputBlock: FC<Props> = ({
   const handleStopRecording = () => {
     if (buttonState === "inactive" && sphereWorking) return;
     setMic("stop");
-    setTimeout(() => {
-      setButtonState("inactive");
-    }, 300);
+
+    setButtonState("inactive");
   };
 
   const handleDropRecording = () => {
@@ -191,6 +197,32 @@ const InputBlock: FC<Props> = ({
 
     return () => window.removeEventListener("keydown", handleKeyEvent);
   }, [handleKeyEvent]);
+  const vad = useMicVAD({
+    ...vadOptions,
+    onVADMisfire: () => {
+      console.log("SPEECH MISFIRE");
+      setButtonState("inactive");
+      setSphereWorking(false);
+    },
+    onSpeechEnd: async (audio) => {
+      const wavBuffer = utils.encodeWAV(audio);
+      const wav = new Blob([wavBuffer], { type: "audio/wav" });
+      console.log("SPEECH END");
+      handleStopRecording();
+      handleEndRecord(wav);
+    },
+    onSpeechStart: () => {
+      console.log("SPEECH START");
+      handleStartRecording();
+    },
+  });
+  if (secretActivatedOnce) {
+    if (!(buttonState === "inactive" && sphereWorking)) {
+      if (!vad.listening) vad.start();
+    } else {
+      if (vad.listening) vad.pause();
+    }
+  }
 
   return (
     <BottomMessageWrapper>
@@ -199,40 +231,45 @@ const InputBlock: FC<Props> = ({
           <StartButton onClick={handleSecretActivationClick}>start</StartButton>
         </StartButtonContainer>
       )}
-      {secretActivatedOnce && <>
-        {!(buttonState === "inactive" && sphereWorking) && (
-          <VadModule
-            handleEndRecord={handleEndRecord}
-            handleStopRecording={handleStopRecording}
-            handleStartRecording={handleStartRecording}
-          ></VadModule>
-        )}
-        
-        {buttonState === "active" ? (
-          <MicrophoneAreaWrapper>
-            <IconsContainer>
-              <MicrophoneWrapper
-                className={activeMicStyles}
-              >
-                <MicrophoneIcon className={isDisabled} />
-              </MicrophoneWrapper>
-            </IconsContainer>
-            <MicPointContainer>
-              <MicPoint />
-            </MicPointContainer>
-            <MicrophoneText>
-              {"00:" + timer}
-            </MicrophoneText>
-          </MicrophoneAreaWrapper>
-        ) : (
-          <MicrophoneAreaWrapper>
-            {!sphereWorking && <MicrophoneText>{"Скажи что-нибудь"}</MicrophoneText>}
-          </MicrophoneAreaWrapper>
-        )}
-        {/* ----------------------------------------
+      {secretActivatedOnce && (
+        <>
+          <div style={{ color: "red", whiteSpace: "nowrap" }}>
+            Thinking {JSON.stringify(sphereWorking)}
+            <br />
+            Listen {JSON.stringify(vad.listening)}
+            <br />
+            Speaking {JSON.stringify(vad.userSpeaking)}
+            <br />
+            Button {buttonState}
+          </div>
+          {!(buttonState === "inactive" && sphereWorking) && (
+            <div>Слушаю - говорте!</div>
+          )}
+
+          {buttonState === "active" ? (
+            <MicrophoneAreaWrapper>
+              <IconsContainer>
+                <MicrophoneWrapper className={activeMicStyles}>
+                  <MicrophoneIcon className={isDisabled} />
+                </MicrophoneWrapper>
+              </IconsContainer>
+              <MicPointContainer>
+                <MicPoint />
+              </MicPointContainer>
+              <MicrophoneText>{"00:" + timer}</MicrophoneText>
+            </MicrophoneAreaWrapper>
+          ) : (
+            <MicrophoneAreaWrapper>
+              {!sphereWorking && (
+                <MicrophoneText>{"Скажи что-нибудь"}</MicrophoneText>
+              )}
+            </MicrophoneAreaWrapper>
+          )}
+          {/* ----------------------------------------
         uncomment section below to enable text input
         --------------------------------------------- */}
-        {/* <TextAreaWrapper>
+          {/*
+        <TextAreaWrapper>
           <TextArea
             className={activeMicStyles}
             value={buttonState === "inactive" ? text : "00:" + timer}
@@ -256,8 +293,10 @@ const InputBlock: FC<Props> = ({
           >
             <MicrophoneIcon className={isDisabled} />
           </MicrophoneWrapper>
-        </IconsContainer> */}
-      </>}
+        </IconsContainer>
+        */}
+        </>
+      )}
     </BottomMessageWrapper>
   );
 };
@@ -491,4 +530,4 @@ const BottomMessageWrapper = styled.div`
   padding: 15px;
 `;
 
-export default memo(InputBlock);
+export default memo(MessageBox);

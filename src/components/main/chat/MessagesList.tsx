@@ -1,13 +1,13 @@
 import { FC, memo } from "react";
 import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
-import BotMessage from "@/components/chat/botMessage";
-import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
+import BotMessage from ".//MessageItem";
+import { MESSAGE_EMITTER } from "@/components/main/utils/enums/messageEmitter.enum";
 
 type Props = {
   messages: TChatMessage[];
 };
 
-const ChatMessagesList: FC<Props> = ({ messages }) => {
+const MessagesList: FC<Props> = ({ messages }) => {
   return (
     <>
       {messages.map((el) => {
@@ -26,4 +26,4 @@ const ChatMessagesList: FC<Props> = ({ messages }) => {
   );
 };
 
-export default memo(ChatMessagesList);
+export default memo(MessagesList);

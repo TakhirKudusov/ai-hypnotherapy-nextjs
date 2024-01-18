@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import styled from "styled-components";
-import { MESSAGE_EMITTER } from "@/components/chat/utils/enums/messageEmitter.enum";
+import { MESSAGE_EMITTER } from "@/components/main/utils/enums/messageEmitter.enum";
 import { PanoramaPhotosphereSelect } from "@styled-icons/material";
 import { Face } from "@styled-icons/boxicons-regular";
 import { TypeAnimation } from "react-type-animation";
@@ -11,7 +11,7 @@ type Props = {
   isLoading?: boolean;
 };
 
-const BotMessage: FC<Props> = ({ emitter, text, isLoading }) => {
+const MessageItem: FC<Props> = ({ emitter, text, isLoading }) => {
   return (
     <Wrapper emitter={emitter}>
       <AvatarWrapper>
@@ -123,4 +123,4 @@ const Wrapper = styled.div<{ emitter: MESSAGE_EMITTER }>`
     emitter === MESSAGE_EMITTER.BOT ? "ltr" : "rtl"};
 `;
 
-export default memo(BotMessage);
+export default memo(MessageItem);
