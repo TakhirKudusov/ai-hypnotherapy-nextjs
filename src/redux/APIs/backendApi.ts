@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
 import { TTokenData } from "@/redux/APIs/utils/types/response/TTokenData";
 import { ROUTES } from "@/routes/routes.enum";
+import { debug } from "console";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "/api",
@@ -17,7 +18,7 @@ const baseQuery = fetchBaseQuery({
 const staggeredBaseQueryWithFailOut = retry(
   async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
-
+    
     if (
       result?.error?.status === 401 &&
       location.pathname !== ROUTES.HOME_AUTH
@@ -27,8 +28,8 @@ const staggeredBaseQueryWithFailOut = retry(
           url: "/Account/Refresh",
           method: "POST",
           body: {
-            accessToken: localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN),
-            refreshToken: localStorage.getItem(
+            AccessToken: localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN),
+            RefreshToken: localStorage.getItem(
               LOCAL_STORAGE_ITEM.REFRESH_TOKEN,
             ),
           },
