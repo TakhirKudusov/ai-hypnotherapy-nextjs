@@ -1,48 +1,35 @@
+import { SPHERE_COLORS } from "@/const";
+
 const sphereRad = 280; // 20..500
 const radius_sp = 1; // 1..2
 let framesPerRotation = 5000;
 let r: string | number, g: string | number, b: string | number; // particle color
 
-const setLightBlue = () => {
-  r = 52;
-  g = 235;
-  b = 222;
-};
-const setOrange = () => {
-  r = 255;
-  g = 191;
-  b = 0;
-};
-const setViolet = () => {
-  r = 235;
-  g = 67;
-  b = 250;
-};
-const setFuchsia = () => {
-  r = 201;
-  g = 10;
-  b = 144;
+const setColor = ([red, green, blue]: Readonly<[number, number, number]>) => {
+  r = red;
+  g = green;
+  b = blue;
 };
 
-setLightBlue();
+setColor(SPHERE_COLORS.idle);
 
 const turnSpeed = () => (2 * Math.PI) / framesPerRotation; //the sphere will rotate at this speed (one complete rotation every 1600 frames).
 
 const onUserSpeaking = () => {
   framesPerRotation = 5000;
-  setOrange();
+  setColor(SPHERE_COLORS.userSpeaking);
 };
 const onProcessing = () => {
   framesPerRotation = 1000;
-  setViolet();
+  setColor(SPHERE_COLORS.processing);
 };
 const onAiSpeaking = () => {
   framesPerRotation = 5000;
-  setFuchsia();
+  setColor(SPHERE_COLORS.aiSpeaking);
 };
 const reset = () => {
   framesPerRotation = 5000;
-  setLightBlue();
+  setColor(SPHERE_COLORS.idle);
 };
 
 const wait = 1;

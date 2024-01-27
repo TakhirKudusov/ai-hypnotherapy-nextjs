@@ -18,6 +18,7 @@ import { TChatMessage } from "@/redux/APIs/utils/types/response/TChatMessage";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
 import Canvas from "@/components/main/Canvas";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
+import { CHAT_OPACITY } from "@/const";
 
 type Props = {
   messages: TChatMessage[];
@@ -58,13 +59,6 @@ const ChatPanel: FC<Props> = ({
       setChatContainerHeight("100%");
       return;
     }
-    if (sphereWorking) {
-      setChatContainerHeight(
-        `${Math.floor(chatContainerRef.current?.offsetHeight * 0.66)}px`,
-      );
-    } else {
-      setChatContainerHeight(`${chatContainerRef.current?.offsetHeight}px`);
-    }
   }, [sphereWorking, chatContainerRef]);
 
   useEffect(() => {
@@ -90,18 +84,21 @@ const ChatPanel: FC<Props> = ({
   return (
     <Wrapper>
       <ChatContainer ref={chatContainerRef}>
-        <CanvasContainer>
-          <Canvas draw={particleActions.draw} />
-        </CanvasContainer>
+        <SphereContainer>
+          <CanvasContainer>
+            <Canvas draw={particleActions.draw} />
+          </CanvasContainer>
+        </SphereContainer>
+        <NewDialogButton onClick={handleStartNewDDialogueClick}>
+          Начать новый диалог
+        </NewDialogButton>
+
         <Container
           style={{
             maxHeight: chatContainerHeight,
           }}
         >
           <ScrollContainer id="scroll-container">
-            <NewDialogButton onClick={handleStartNewDDialogueClick}>
-              Начать новый диалог
-            </NewDialogButton>
             {isLoading ? (
               <LoadingContainer>
                 <SpinnerIcon />
@@ -117,6 +114,7 @@ const ChatPanel: FC<Props> = ({
             )}
           </ScrollContainer>
           <MessageBox
+            isLoading={isLoading}
             setNewMessages={setNewMessages}
             sendTextLoading={sendTextLoading}
             sphereWorking={sphereWorking}
@@ -185,17 +183,25 @@ const LoadingContainer = styled.div`
   align-items: center;
 `;
 
+const SphereContainer = styled.div`
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  pointer-events: none;
+`;
+
 const CanvasContainer = styled.div`
   width: 100%;
   overflow: visible;
   justify-content: center;
   display: flex;
-  position: absolute;
-  z-index: 0;
-  top: 0;
+  align-self: center;
 `;
 
 const ScrollContainer = styled.div`
+  opacity: ${CHAT_OPACITY};
   height: 100%;
   overflow: auto;
   display: flex;
@@ -230,7 +236,6 @@ const ScrollContainer = styled.div`
 const Container = styled.div`
   width: 100%;
   transition: 300ms linear;
-  background-color: #4768b5;
   border-radius: 10px;
   flex-grow: 1;
   display: flex;

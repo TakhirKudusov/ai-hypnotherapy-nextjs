@@ -5,18 +5,26 @@ import RightBlock from "@/components/auth/rightBlock";
 import StyledMain from "@/UI kit/styledMain";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { useCallback, useLayoutEffect } from "react";
+import { useCallback, useState, useLayoutEffect } from "react";
 import { LOCAL_STORAGE_ITEM } from "@/utils/enums/localStorageItem.enum";
 import { ROUTES } from "@/routes/routes.enum";
+import Loading from './loading';
 import Script from "next/script";
 
 export default function Home() {
+  const [loaded, setLoaded] = useState(false);
   const router = useRouter();
 
   useLayoutEffect(() => {
     const accessToken = localStorage.getItem(LOCAL_STORAGE_ITEM.ACCESS_TOKEN);
     const refreshToken = localStorage.getItem(LOCAL_STORAGE_ITEM.REFRESH_TOKEN);
-    if (accessToken && refreshToken) router.push(ROUTES.CHAT);
+
+    if (accessToken && refreshToken) {
+      router.push(ROUTES.CHAT);
+      return;
+    }
+
+    setLoaded(true);
   }, []);
 
   const handleTelegramWidgetReady = useCallback(() => {
@@ -25,6 +33,12 @@ export default function Home() {
     if (!(widget && widgetRoot)) return;
     widgetRoot.appendChild(widget);
   }, []);
+
+  if (!loaded) {
+    return (
+      <Loading />
+    );
+  }
 
   return (
     <>

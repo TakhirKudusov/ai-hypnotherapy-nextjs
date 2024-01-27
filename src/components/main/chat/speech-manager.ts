@@ -3,6 +3,7 @@ import { chatApi } from "@/redux/APIs/chatApi";
 import { store } from "@/redux/store";
 import { THandleNewMessage } from "@/utils/types/THandleNewMessage";
 import { Howl } from "howler";
+import { STOP_WORDS } from '@/const';
 
 let source: { stop: (arg0: number) => void };
 let sourceIsStarted = false;
@@ -67,6 +68,11 @@ const handleResponse =
   (setNewMessage: THandleNewMessage) => async (res: any) => {
     const { data } = res;
 
+    if (STOP_WORDS.includes(data?.data)) {
+      console.log('skipping stop word', data);
+      return;
+    }
+
     setNewMessage(data.data, 0);
 
     const textData = await store.dispatch(
@@ -101,7 +107,15 @@ const createBody = (data: Blob) => {
 
 export const handleSuccess =
   (handleSpeechEnd: () => void) =>
-  async ({ uid, messageLength }: { uid: string; messageLength: number }) => {
+  async (data: { uid: string; messageLength: number } | undefined) => {
+    if (!data) {
+      particleActions.reset();
+      stopSourceIfNeeded();
+      handleSpeechEnd();
+      return;
+    }
+
+    const { uid, messageLength } = data as { uid: string; messageLength: number };
     try {
       if (typeof window !== "undefined") {
         stopSourceIfNeeded();
