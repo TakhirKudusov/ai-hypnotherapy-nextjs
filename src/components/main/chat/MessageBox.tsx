@@ -30,6 +30,7 @@ const vadOptions = {
   startOnLoad: false,
 };
 type Props = {
+  isLoading: boolean;
   text: string;
   setText: Dispatch<SetStateAction<string>>;
   setSphereWorking: Dispatch<SetStateAction<boolean>>;
@@ -44,6 +45,7 @@ type Props = {
 };
 
 const MessageBox: FC<Props> = ({
+  isLoading,
   makeInterferenceFromText,
   setText,
   text,
@@ -222,26 +224,30 @@ const MessageBox: FC<Props> = ({
     } else {
       if (vad.listening) vad.pause();
     }
+  } else {
+    if (vad.listening) vad.pause();
   }
+
+  const handlePauseClick = () => {
+    setSecretActivatedOnce(false);
+    setButtonState("inactive");
+    setSphereWorking(false);
+  };
+
+  console.log('Thinking', JSON.stringify(sphereWorking));
+  console.log('Listen', JSON.stringify(vad.listening));
+  console.log('Speaking', JSON.stringify(vad.userSpeaking));
+  console.log('Button', buttonState);
 
   return (
     <BottomMessageWrapper>
-      {!secretActivatedOnce && (
+      {!secretActivatedOnce && !isLoading && (
         <StartButtonContainer>
           <StartButton onClick={handleSecretActivationClick}>start</StartButton>
         </StartButtonContainer>
       )}
       {secretActivatedOnce && (
         <>
-          <div style={{ color: "red", whiteSpace: "nowrap" }}>
-            Thinking {JSON.stringify(sphereWorking)}
-            <br />
-            Listen {JSON.stringify(vad.listening)}
-            <br />
-            Speaking {JSON.stringify(vad.userSpeaking)}
-            <br />
-            Button {buttonState}
-          </div>
           {!(buttonState === "inactive" && sphereWorking) && (
             <div>Слушаю - говорте!</div>
           )}
@@ -265,6 +271,10 @@ const MessageBox: FC<Props> = ({
               )}
             </MicrophoneAreaWrapper>
           )}
+
+          <StartButtonContainer>
+            <StartButton onClick={handlePauseClick}>pause</StartButton>
+          </StartButtonContainer>
           {/* ----------------------------------------
         uncomment section below to enable text input
         --------------------------------------------- */}
