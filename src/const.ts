@@ -9,6 +9,7 @@ export const SPHERE_COLORS = {
 
 export const STOP_WORDS = [
   'Продолжение следует...',
+  'just noise :)',
   'С вами был Игорь Негода.',
   'Субтитры подготовил DmitryRozkov',
   'Поехали.',
