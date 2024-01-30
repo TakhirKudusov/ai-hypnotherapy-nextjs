@@ -16,3 +16,5 @@ export const STOP_WORDS = [
   'Удачи!',
   'Спасибо за внимание. До новых встреч.',
 ];
+
+export const SECRET_WORD = "34test8129";

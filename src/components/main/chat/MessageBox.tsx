@@ -11,6 +11,7 @@ import {
 import StyledTextArea from "@/UI kit/styledTextArea";
 import styled, { keyframes } from "styled-components";
 import { Microphone, PaperAirplane } from "@styled-icons/heroicons-solid";
+import { SpinnerIos } from "@styled-icons/fluentui-system-filled";
 import { toast } from "react-toastify";
 import { TTextData } from "@/redux/APIs/utils/types/request/TTextData";
 import clsx from "clsx";
@@ -20,9 +21,12 @@ import { v1 } from "uuid";
 import { onSpeechStart } from "@/components/main/chat/speech-manager";
 import { getLocalStreamHelper } from "@/utils/helpers/getLocalStream.helper";
 import { THandleEndRecord } from "@/utils/types/THandleEndRecord";
+import { SECRET_WORD } from '@/const';
 import VadModule from "./vadModule";
 import { useMicVAD, utils } from "@ricky0123/vad-react";
 import * as ort from "onnxruntime-web";
+import { particleActions } from "../particle-manager";
+
 ort.env.wasm.wasmPaths = "/_next/static/";
 const vadOptions = {
   modelURL: "/_next/static/silero_vad.onnx",
@@ -162,7 +166,8 @@ const MessageBox: FC<Props> = ({
 
   const handleSecretWordClick = useCallback(() => {
     try {
-      makeInterferenceFromText({ text: "34test8129" });
+      makeInterferenceFromText({ text: SECRET_WORD });
+      particleActions.reset();
     } catch (e) {
       console.error(e);
       toast.error("Что-то пошло не так. Пожалуйста, попробуйте снова позже.");
@@ -232,20 +237,27 @@ const MessageBox: FC<Props> = ({
     setSecretActivatedOnce(false);
     setButtonState("inactive");
     setSphereWorking(false);
+    particleActions.reset();
   };
 
+  /*
   console.log('Thinking', JSON.stringify(sphereWorking));
   console.log('Listen', JSON.stringify(vad.listening));
   console.log('Speaking', JSON.stringify(vad.userSpeaking));
   console.log('Button', buttonState, '\n\n\n');
+  */
 
   return (
     <BottomMessageWrapper>
-      {!secretActivatedOnce && !isLoading && !vad?.loading && (
+      {!secretActivatedOnce && !isLoading && !vad?.loading ? (
         <StartButtonContainer>
           <StartButton onClick={handleSecretActivationClick}>start</StartButton>
         </StartButtonContainer>
-      )}
+      ) : isLoading || vad?.loading ? (
+        <LoadingContainer>
+          <SpinnerIcon />
+        </LoadingContainer>
+      ) : null}
       {secretActivatedOnce && (
         <>
           {!(buttonState === "inactive" && sphereWorking) && (
@@ -539,5 +551,30 @@ const BottomMessageWrapper = styled.div`
   column-gap: 10px;
   padding: 15px;
 `;
+
+const animation = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const SpinnerIcon = styled(SpinnerIos)`
+  width: 35px;
+  height: 35px;
+  color: white;
+  animation: ${animation} linear 1000ms infinite;
+`;
+
+const LoadingContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 
 export default memo(MessageBox);

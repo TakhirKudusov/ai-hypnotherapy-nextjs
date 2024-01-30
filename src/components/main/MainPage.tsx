@@ -61,6 +61,7 @@ const MainPage = () => {
       }
 
       handleSuccess(handleSpeechEnd)({
+        text: textInterfData?.originalArgs?.text,
         uid: data.data.voiceResponse.recordUid,
         messageLength: data.data.textResponse.length,
       });
