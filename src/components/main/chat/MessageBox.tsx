@@ -237,11 +237,11 @@ const MessageBox: FC<Props> = ({
   console.log('Thinking', JSON.stringify(sphereWorking));
   console.log('Listen', JSON.stringify(vad.listening));
   console.log('Speaking', JSON.stringify(vad.userSpeaking));
-  console.log('Button', buttonState);
+  console.log('Button', buttonState, '\n\n\n');
 
   return (
     <BottomMessageWrapper>
-      {!secretActivatedOnce && !isLoading && (
+      {!secretActivatedOnce && !isLoading && !vad?.loading && (
         <StartButtonContainer>
           <StartButton onClick={handleSecretActivationClick}>start</StartButton>
         </StartButtonContainer>
