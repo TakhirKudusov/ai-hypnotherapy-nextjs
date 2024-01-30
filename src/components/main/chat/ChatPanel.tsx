@@ -99,11 +99,7 @@ const ChatPanel: FC<Props> = ({
           }}
         >
           <ScrollContainer id="scroll-container">
-            {isLoading ? (
-              <LoadingContainer>
-                <SpinnerIcon />
-              </LoadingContainer>
-            ) : isError ? (
+            {isError ? (
               <ErrorMessage>
                 Что-то пошло не так.
                 <br />
@@ -157,22 +153,6 @@ const ErrorMessage = styled.div`
   font-size: 18px;
   text-align: center;
   line-height: 1.4;
-`;
-
-const animation = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const SpinnerIcon = styled(SpinnerIos)`
-  width: 35px;
-  height: 35px;
-  color: white;
-  animation: ${animation} linear 1000ms infinite;
 `;
 
 const LoadingContainer = styled.div`

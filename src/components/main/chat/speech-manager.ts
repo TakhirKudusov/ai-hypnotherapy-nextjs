@@ -3,7 +3,7 @@ import { chatApi } from "@/redux/APIs/chatApi";
 import { store } from "@/redux/store";
 import { THandleNewMessage } from "@/utils/types/THandleNewMessage";
 import { Howl } from "howler";
-import { STOP_WORDS } from '@/const';
+import { SECRET_WORD, STOP_WORDS } from '@/const';
 
 let source: { stop: (arg0: number) => void };
 let sourceIsStarted = false;
@@ -75,10 +75,9 @@ const handleResponse =
 
     setNewMessage(data.data, 0);
 
+    const text = data.data;
     const textData = await store.dispatch(
-      chatApi.endpoints.makeInferenceFromText.initiate({
-        text: data.data,
-      }),
+      chatApi.endpoints.makeInferenceFromText.initiate({ text }),
     );
 
     console.log(textData);
@@ -90,6 +89,7 @@ const handleResponse =
     }
 
     return {
+      text,
       uid: (textData as any).data.data.voiceResponse.recordUid,
       messageLength: (textData as any).data.data.textResponse.length,
     };
@@ -107,7 +107,7 @@ const createBody = (data: Blob) => {
 
 export const handleSuccess =
   (handleSpeechEnd: () => void) =>
-  async (data: { uid: string; messageLength: number } | undefined) => {
+  async (data: { text: string | undefined; uid: string; messageLength: number } | undefined) => {
     if (!data) {
       particleActions.reset();
       stopSourceIfNeeded();
@@ -115,7 +115,8 @@ export const handleSuccess =
       return;
     }
 
-    const { uid, messageLength } = data as { uid: string; messageLength: number };
+    const { uid, messageLength, text } = data as { uid: string; messageLength: number, text: string | undefined };
+
     try {
       if (typeof window !== "undefined") {
         stopSourceIfNeeded();
@@ -132,6 +133,11 @@ export const handleSuccess =
           onplayerror: messageLength ? endAction : () => {},
           onend: messageLength ? endAction : () => {},
         });
+
+        if (text === SECRET_WORD) {
+          particleActions.reset();
+          return;
+        }
 
         // const audio = new Audio(`/api/Chat/DownloadRecord/${uid}`);
         // audio.onended = endAction;
